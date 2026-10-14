@@ -1,0 +1,33 @@
+# Secrets are NOT stored in this file.
+# Create in Codemagic UI (Team settings → Code signing identities → Android keystores):
+#   - Android keystore reference "benacion_keystore"
+workflows:
+  react-native-android:
+    name: JojoMatch Android
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    environment:
+      android_signing:
+        - benacion_keystore
+      vars:
+        PACKAGE_NAME: "com.jojjjjjomaatcchh"
+        NODE_ENV: "production"
+        ENABLE_JS_OBFUSCATION: "true"
+      node: 20
+      java: 17
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          # NODE_ENV=production makes npm skip devDependencies (javascript-obfuscator is needed by metro.config.js)
+          npm ci --include=dev
+      - name: Set Android SDK location
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Build Android release (AAB + APK)
+        script: |
+          cd android
+          ./gradlew bundleRelease assembleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+      - android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/**/mapping.txt
