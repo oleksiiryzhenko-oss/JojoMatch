@@ -104,15 +104,29 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            // Codemagic injects these values for the keystore referenced in codemagic.yaml.
+            if (System.getenv('CI') == 'true') {
+                def keystorePath = System.getenv('CM_KEYSTORE_PATH')
+                def keystorePassword = System.getenv('CM_KEYSTORE_PASSWORD')
+                def cmKeyAlias = System.getenv('CM_KEY_ALIAS')
+                def cmKeyPassword = System.getenv('CM_KEY_PASSWORD')
+                if (!keystorePath || !keystorePassword || !cmKeyAlias || !cmKeyPassword) {
+                    throw new GradleException('Codemagic Android signing credentials are incomplete. Check android_signing in codemagic.yaml.')
+                }
+                storeFile file(keystorePath)
+                storePassword keystorePassword
+                keyAlias cmKeyAlias
+                keyPassword cmKeyPassword
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
             shrinkResources enableShrinkResources.toBoolean()
             minifyEnabled enableMinifyInReleaseBuilds
