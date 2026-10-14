@@ -1,6 +1,6 @@
 # Secrets are NOT stored in this file.
 # Create in Codemagic UI (Team settings → Code signing identities → Android keystores):
-#   - Android keystore reference "benacion_keystore"
+#   - Android keystore reference "jojomatch"
 workflows:
   react-native-android:
     name: JojoMatch Android
@@ -8,7 +8,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       android_signing:
-        - benacion_keystore
+        - jojomatch
       vars:
         PACKAGE_NAME: "com.jojjjjjomaatcchh"
         NODE_ENV: "production"
