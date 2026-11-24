@@ -22,8 +22,8 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
   if (!exercise) {
     return (
       <Screen edges={['top', 'bottom']}>
-        <Header back title="Egzersiz" />
-        <EmptyState title="Egzersiz bulunamadı" />
+        <Header back title="Exercício" />
+        <EmptyState title="Exercício não encontrado" />
       </Screen>
     );
   }
@@ -32,23 +32,23 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
   const chartOptions =
     exercise.type === 'weight'
       ? [
-          { value: 'bestWeight', label: 'Ağırlık', format: (v) => `${fmtNum(v)} kg` },
-          { value: 'best1RM', label: 'Tahmini 1RM', format: (v) => `${fmtNum(v)} kg` },
-          { value: 'volume', label: 'Hacim', format: (v) => `${fmtBig(v)} kg` },
+          { value: 'bestWeight', label: 'Peso', format: (v) => `${fmtNum(v)} kg` },
+          { value: 'best1RM', label: '1RM estimado', format: (v) => `${fmtNum(v)} kg` },
+          { value: 'volume', label: 'Volume', format: (v) => `${fmtBig(v)} kg` },
         ]
       : exercise.type === 'distance'
         ? [
-            { value: 'bestDistance', label: 'Mesafe', format: (v) => `${fmtNum(v, 2)} km` },
-            { value: 'time', label: 'Süre', format: (v) => formatSeconds(v) },
+            { value: 'bestDistance', label: 'Distância', format: (v) => `${fmtNum(v, 2)} km` },
+            { value: 'time', label: 'Tempo', format: (v) => formatSeconds(v) },
           ]
         : exercise.type === 'time'
           ? [
-              { value: 'bestTime', label: 'En uzun', format: (v) => formatSeconds(v) },
-              { value: 'time', label: 'Toplam', format: (v) => formatSeconds(v) },
+              { value: 'bestTime', label: 'Mais longo', format: (v) => formatSeconds(v) },
+              { value: 'time', label: 'Total', format: (v) => formatSeconds(v) },
             ]
           : [
-              { value: 'bestReps', label: 'En çok', format: (v) => `${Math.round(v)}` },
-              { value: 'reps', label: 'Toplam', format: (v) => `${Math.round(v)}` },
+              { value: 'bestReps', label: 'Máximo', format: (v) => `${Math.round(v)}` },
+              { value: 'reps', label: 'Total', format: (v) => `${Math.round(v)}` },
             ];
   const activeChart = chartOptions.find((o) => o.value === chartKey) || chartOptions[0];
 
@@ -58,12 +58,12 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
     .map(({ session, summary }) => ({ date: session.startedAt, value: summary[activeChart.value] || 0 }));
 
   const recordCards = [
-    exercise.type === 'weight' && records.bestWeight && { label: 'En yüksek ağırlık', value: `${fmtNum(records.bestWeight.value)} kg`, date: records.bestWeight.date },
-    exercise.type === 'weight' && records.best1RM && { label: 'Tahmini 1RM', value: `${fmtNum(records.best1RM.value)} kg`, date: records.best1RM.date },
-    exercise.type === 'weight' && records.volume && { label: 'En yüksek hacim', value: `${fmtBig(records.volume.value)} kg`, date: records.volume.date },
-    (exercise.type === 'reps' || exercise.type === 'weight') && records.bestReps && { label: 'En çok tekrar', value: `${records.bestReps.value}`, date: records.bestReps.date },
-    (exercise.type === 'time' || exercise.type === 'distance') && records.bestTime && { label: 'En uzun süre', value: formatSeconds(records.bestTime.value), date: records.bestTime.date },
-    exercise.type === 'distance' && records.bestDistance && { label: 'En uzun mesafe', value: `${fmtNum(records.bestDistance.value, 2)} km`, date: records.bestDistance.date },
+    exercise.type === 'weight' && records.bestWeight && { label: 'Maior carga', value: `${fmtNum(records.bestWeight.value)} kg`, date: records.bestWeight.date },
+    exercise.type === 'weight' && records.best1RM && { label: '1RM estimado', value: `${fmtNum(records.best1RM.value)} kg`, date: records.best1RM.date },
+    exercise.type === 'weight' && records.volume && { label: 'Maior volume', value: `${fmtBig(records.volume.value)} kg`, date: records.volume.date },
+    (exercise.type === 'reps' || exercise.type === 'weight') && records.bestReps && { label: 'Máx. repetições', value: `${records.bestReps.value}`, date: records.bestReps.date },
+    (exercise.type === 'time' || exercise.type === 'distance') && records.bestTime && { label: 'Maior tempo', value: formatSeconds(records.bestTime.value), date: records.bestTime.date },
+    exercise.type === 'distance' && records.bestDistance && { label: 'Maior distância', value: `${fmtNum(records.bestDistance.value, 2)} km`, date: records.bestDistance.date },
   ].filter(Boolean);
 
   // Compare last two entries
@@ -76,7 +76,7 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
         back
         title={exercise.name}
         subtitle={`${exercise.category} · ${EXERCISE_TYPES[exercise.type]?.label}`}
-        right={<IconButton icon={Pencil} onPress={() => navigation.navigate('ExerciseEditor', { exerciseId })} label="Düzenle" />}
+        right={<IconButton icon={Pencil} onPress={() => navigation.navigate('ExerciseEditor', { exerciseId })} label="Editar" />}
       />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {exercise.notes ? (
@@ -89,8 +89,8 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
           <Card>
             <EmptyState
               icon={ChartIcon}
-              title="Henüz kayıt yok"
-              text="Bu egzersizi bir antrenmanda yaptığında rekorların ve grafiğin burada görünecek."
+              title="Nenhum registro ainda"
+              text="Quando fizer este exercício em um treino, seus recordes e gráficos aparecerão aqui."
             />
           </Card>
         ) : (
@@ -98,10 +98,10 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
             {latest && prev ? (
               <Card style={styles.compare}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.compareLabel}>Son antrenman · {formatShortDate(latest.session.startedAt)}</Text>
+                  <Text style={styles.compareLabel}>Último treino · {formatShortDate(latest.session.startedAt)}</Text>
                   <Text style={styles.compareValue}>{metric.format(latest.summary[metric.key])}</Text>
                   <Text style={styles.compareSub}>
-                    Önceki: {metric.format(prev.summary[metric.key])} ({formatShortDate(prev.session.startedAt)})
+                    Anterior: {metric.format(prev.summary[metric.key])} ({formatShortDate(prev.session.startedAt)})
                   </Text>
                 </View>
                 <View
@@ -130,7 +130,7 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
               </Card>
             ) : null}
 
-            <SectionHeader title="Kişisel rekorlar" />
+            <SectionHeader title="Recordes pessoais" />
             <View style={styles.records}>
               {recordCards.map((r) => (
                 <View key={r.label} style={styles.record}>
@@ -142,7 +142,7 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
               ))}
             </View>
 
-            <SectionHeader title="Gelişim grafiği" />
+            <SectionHeader title="Gráfico de evolução" />
             <Card>
               <Segmented
                 options={chartOptions.map((o) => ({ value: o.value, label: o.label }))}
@@ -153,7 +153,7 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
               <LineChart points={points} format={activeChart.format} />
             </Card>
 
-            <SectionHeader title={`Geçmiş (${history.length})`} />
+            <SectionHeader title={`Histórico (${history.length})`} />
             {history.map(({ session, item, summary }, idx) => {
               const isBest =
                 records[metric.key] && summary[metric.key] === records[metric.key].value && records[metric.key].date === session.startedAt;
@@ -169,8 +169,8 @@ const ExerciseDetailScreen = ({ navigation, route }) => {
                     <Text style={styles.histName} numberOfLines={1}>
                       {session.name}
                     </Text>
-                    {isBest ? <Badge label="REKOR" color={colors.warning} /> : null}
-                    {idx === 0 && !isBest ? <Badge label="SON" /> : null}
+                    {isBest ? <Badge label="RECORDE" color={colors.warning} /> : null}
+                    {idx === 0 && !isBest ? <Badge label="ÚLTIMO" /> : null}
                   </View>
                   <Text style={styles.histSets}>{item.sets.map((s) => formatSet(s, exercise.type)).join('  ·  ')}</Text>
                   {item.note ? <Text style={styles.histNote}>📝 {item.note}</Text> : null}

@@ -76,11 +76,11 @@ const MonthCalendar = ({ month, onMonthChange, marks = {}, selected, onSelect })
       ))}
       <View style={styles.legend}>
         <View style={[styles.dot, { backgroundColor: colors.primary }]} />
-        <Text style={styles.legendText}>Yapıldı</Text>
+        <Text style={styles.legendText}>Feito</Text>
         <View style={[styles.dot, styles.dotPlanned]} />
-        <Text style={styles.legendText}>Planlı</Text>
+        <Text style={styles.legendText}>Planejado</Text>
         <View style={[styles.dot, { backgroundColor: 'rgba(255, 90, 95, 0.5)' }]} />
-        <Text style={styles.legendText}>Kaçırıldı</Text>
+        <Text style={styles.legendText}>Perdido</Text>
       </View>
     </View>
   );

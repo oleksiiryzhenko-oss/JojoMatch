@@ -3,14 +3,14 @@ export const genId = () =>
   Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
 // ================= DATES =================
-export const MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+export const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 export const MONTHS_LONG = [
-  'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık',
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ];
-// index = Date#getDay() (0 = Pazar)
-export const WEEKDAYS = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-export const WEEKDAYS_LONG = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+// index = Date#getDay() (0 = Domingo)
+export const WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+export const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 // Week starts on Monday
 export const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
@@ -72,9 +72,9 @@ export const formatShortDate = (date) => {
   if (!date) return '';
   const d = new Date(date);
   const today = new Date();
-  if (isSameDay(d, today)) return 'Bugün';
-  if (isSameDay(d, addDays(today, 1))) return 'Yarın';
-  if (isSameDay(d, addDays(today, -1))) return 'Dün';
+  if (isSameDay(d, today)) return 'Hoje';
+  if (isSameDay(d, addDays(today, 1))) return 'Amanhã';
+  if (isSameDay(d, addDays(today, -1))) return 'Ontem';
   return `${d.getDate()} ${MONTHS[d.getMonth()]}, ${WEEKDAYS[d.getDay()]}`;
 };
 
@@ -96,9 +96,9 @@ export const formatDuration = (sec) => {
   const total = Math.max(0, Math.round(sec || 0));
   const h = Math.floor(total / 3600);
   const m = Math.round((total % 3600) / 60);
-  if (h) return m ? `${h} sa ${m} dk` : `${h} sa`;
-  if (m) return `${m} dk`;
-  return `${total} sn`;
+  if (h) return m ? `${h} h ${m} min` : `${h} h`;
+  if (m) return `${m} min`;
+  return `${total} s`;
 };
 
 // 75 -> "1:15"
@@ -134,9 +134,9 @@ export const initials = (name = '') =>
     .slice(0, 2)
     .map((w) => w[0] || '')
     .join('')
-    .toLocaleUpperCase('tr-TR') || '?';
+    .toLocaleUpperCase('pt-BR') || '?';
 
-export const normalize = (s = '') => s.toLocaleLowerCase('tr-TR').trim();
+export const normalize = (s = '') => s.toLocaleLowerCase('pt-BR').trim();
 
 export const withAlpha = (hex, alpha) => {
   const a = Math.round(Math.min(1, Math.max(0, alpha)) * 255)
@@ -147,8 +147,8 @@ export const withAlpha = (hex, alpha) => {
 
 export const greeting = () => {
   const h = new Date().getHours();
-  if (h < 6) return 'İyi geceler';
-  if (h < 12) return 'Günaydın';
-  if (h < 18) return 'İyi günler';
-  return 'İyi akşamlar';
+  if (h < 6) return 'Boa noite';
+  if (h < 12) return 'Bom dia';
+  if (h < 18) return 'Boa tarde';
+  return 'Boa noite';
 };

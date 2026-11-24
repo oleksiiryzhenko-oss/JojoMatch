@@ -16,17 +16,17 @@ const useStartWorkout = () => {
 
     if (!activeSession) return go();
 
-    Alert.alert('Devam eden antrenman var', `“${activeSession.name}” henüz bitmedi.`, [
-      { text: 'Devam et', onPress: () => navigation.navigate('Session') },
+    Alert.alert('Treino em andamento', `”${activeSession.name}” ainda não terminou.`, [
+      { text: 'Continuar', onPress: () => navigation.navigate('Session') },
       {
-        text: 'Sil ve yenisini başlat',
+        text: 'Excluir e iniciar novo',
         style: 'destructive',
         onPress: () => {
           discardSession();
           go();
         },
       },
-      { text: 'Vazgeç', style: 'cancel' },
+      { text: 'Cancelar', style: 'cancel' },
     ]);
   };
 };

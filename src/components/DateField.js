@@ -9,7 +9,7 @@ import { formatDate, dayKey, fromDayKey } from '../utils/helpers';
 const pad = (n) => String(n).padStart(2, '0');
 
 // mode 'date': value is 'YYYY-MM-DD'; mode 'time': value is 'HH:MM'
-const DateField = ({ label, value, onChange, mode = 'date', placeholder = 'Seç', minimumDate, style, onClear }) => {
+const DateField = ({ label, value, onChange, mode = 'date', placeholder = 'Selecionar', minimumDate, style, onClear }) => {
   const [show, setShow] = useState(false);
 
   const toDate = () => {
@@ -39,7 +39,7 @@ const DateField = ({ label, value, onChange, mode = 'date', placeholder = 'Seç'
         <Text style={[styles.value, !value && styles.placeholder]}>{display}</Text>
         {value && onClear ? (
           <TouchableOpacity onPress={onClear} hitSlop={10}>
-            <Text style={styles.clear}>Temizle</Text>
+            <Text style={styles.clear}>Limpar</Text>
           </TouchableOpacity>
         ) : null}
       </TouchableOpacity>
@@ -48,7 +48,7 @@ const DateField = ({ label, value, onChange, mode = 'date', placeholder = 'Seç'
           value={toDate()}
           mode={mode}
           is24Hour
-          locale="tr-TR"
+          locale="pt-BR"
           minimumDate={minimumDate}
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           themeVariant="dark"

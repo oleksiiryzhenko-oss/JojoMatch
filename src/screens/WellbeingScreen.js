@@ -10,11 +10,11 @@ import { Screen, Header, Card, Segmented, EmptyState, SectionHeader } from '../c
 import LineChart from '../components/LineChart';
 
 const METRICS = [
-  { key: 'energy', src: 'wellbeingBefore', label: 'Enerji', icon: Zap, max: 5 },
-  { key: 'sleep', src: 'wellbeingBefore', label: 'Uyku', icon: Moon, max: 5 },
-  { key: 'mood', src: 'wellbeingBefore', label: 'Ruh hali', icon: Smile, max: 5 },
-  { key: 'load', src: 'wellbeingAfter', label: 'Yüklenme', icon: Flame, max: 10 },
-  { key: 'fatigue', src: 'wellbeingAfter', label: 'Yorgunluk', icon: Battery, max: 5 },
+  { key: 'energy', src: 'wellbeingBefore', label: 'Energia', icon: Zap, max: 5 },
+  { key: 'sleep', src: 'wellbeingBefore', label: 'Sono', icon: Moon, max: 5 },
+  { key: 'mood', src: 'wellbeingBefore', label: 'Humor', icon: Smile, max: 5 },
+  { key: 'load', src: 'wellbeingAfter', label: 'Esforço', icon: Flame, max: 10 },
+  { key: 'fatigue', src: 'wellbeingAfter', label: 'Fadiga', icon: Battery, max: 5 },
 ];
 
 const valueOf = (s, m) => s[m.src]?.[m.key] || null;
@@ -42,17 +42,17 @@ const WellbeingScreen = ({ navigation }) => {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <Header back title="Sağlık günlüğü" subtitle="Antrenman öncesi ve sonrası değerlendirmeler" />
+      <Header back title="Diário de saúde" subtitle="Avaliações antes e depois do treino" />
       {!rated.length ? (
         <EmptyState
           icon={HeartPulse}
-          title="Henüz değerlendirme yok"
-          text="Antrenmana başlarken enerji, uyku ve ruh halini; bitirirken yüklenme ve yorgunluğunu değerlendir."
+          title="Nenhuma avaliação ainda"
+          text="Avalie sua energia, sono e humor ao começar o treino; e o esforço e fadiga ao terminar."
           style={{ marginTop: 40 }}
         />
       ) : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <Text style={styles.caption}>Son 10 antrenman ortalaması</Text>
+          <Text style={styles.caption}>Média dos últimos 10 treinos</Text>
           <View style={styles.avgRow}>
             {averages.map((m) => {
               const Icon = m.icon;
@@ -70,7 +70,7 @@ const WellbeingScreen = ({ navigation }) => {
             })}
           </View>
 
-          <SectionHeader title={`${metric.label} trendi`} />
+          <SectionHeader title={`${metric.label} — tendência`} />
           <Card>
             <Segmented
               value={metricKey}
@@ -81,11 +81,11 @@ const WellbeingScreen = ({ navigation }) => {
             {points.length ? (
               <LineChart points={points} format={(v) => `${fmtNum(v)}/${metric.max}`} />
             ) : (
-              <Text style={styles.muted}>Bu ölçüt için veri yok.</Text>
+              <Text style={styles.muted}>Sem dados para esta métrica.</Text>
             )}
           </Card>
 
-          <SectionHeader title="Kayıtlar" />
+          <SectionHeader title="Registros" />
           {rated.map((s) => (
             <TouchableOpacity
               key={s.id}

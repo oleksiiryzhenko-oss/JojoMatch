@@ -49,7 +49,7 @@ const PlanScreen = ({ navigation }) => {
               bg={colors.primary}
               color={colors.onPrimary}
               onPress={() => navigation.navigate('WorkoutEditor')}
-              label="Yeni antrenman"
+              label="Novo treino"
             />
           ) : null
         }
@@ -59,8 +59,8 @@ const PlanScreen = ({ navigation }) => {
         value={tab}
         onChange={setTab}
         options={[
-          { value: 'week', label: 'Haftalık plan' },
-          { value: 'templates', label: 'Antrenmanlarım' },
+          { value: 'week', label: 'Plano semanal' },
+          { value: 'templates', label: 'Meus treinos' },
         ]}
       />
       {tab === 'week' ? <WeekPlan navigation={navigation} /> : <TemplatesList navigation={navigation} />}
@@ -82,11 +82,11 @@ const WeekPlan = ({ navigation }) => {
 
   const rangeLabel =
     offset === 0
-      ? 'Bu hafta'
+      ? 'Esta semana'
       : offset === 1
-        ? 'Gelecek hafta'
+        ? 'Próxima semana'
         : offset === -1
-          ? 'Geçen hafta'
+          ? 'Semana passada'
           : `${weekStart.getDate()} ${MONTHS[weekStart.getMonth()]} – ${weekEnd.getDate()} ${MONTHS[weekEnd.getMonth()]}`;
 
   const plannedCount = days.reduce((acc, d) => acc + getPlannedForDate(weekPlan, scheduleEdits, d).length, 0);
@@ -95,20 +95,20 @@ const WeekPlan = ({ navigation }) => {
     <>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.weekNav}>
-          <IconButton icon={ChevronLeft} onPress={() => setOffset((o) => o - 1)} label="Önceki hafta" />
+          <IconButton icon={ChevronLeft} onPress={() => setOffset((o) => o - 1)} label="Semana anterior" />
           <TouchableOpacity onPress={() => setOffset(0)} style={{ alignItems: 'center' }}>
             <Text style={styles.weekLabel}>{rangeLabel}</Text>
-            <Text style={styles.weekSub}>{plannedCount} antrenman planlandı</Text>
+            <Text style={styles.weekSub}>{plannedCount} treinos planejados</Text>
           </TouchableOpacity>
-          <IconButton icon={ChevronRight} onPress={() => setOffset((o) => o + 1)} label="Sonraki hafta" />
+          <IconButton icon={ChevronRight} onPress={() => setOffset((o) => o + 1)} label="Próxima semana" />
         </View>
 
         {!templates.length ? (
           <Card>
             <EmptyState
               icon={ClipboardList}
-              title="Önce bir antrenman oluştur"
-              text="Planına ekleyebilmek için “Antrenmanlarım” sekmesinden bir şablon oluştur."
+              title="Crie um treino primeiro"
+              text='Para adicionar ao seu plano, crie um modelo na aba “Meus treinos”.'
             />
           </Card>
         ) : null}
@@ -134,12 +134,12 @@ const WeekPlan = ({ navigation }) => {
                 <View style={{ flex: 1 }}>
                   <Text style={styles.dayName}>
                     {WEEKDAYS_LONG[d.getDay()]}
-                    {isToday ? <Text style={{ color: colors.primary }}> · Bugün</Text> : null}
+                    {isToday ? <Text style={{ color: colors.primary }}> · Hoje</Text> : null}
                   </Text>
                   <View style={styles.badges}>
-                    {cfg.rest && !planned.length ? <Badge label="Dinlenme" color={colors.textSecondary} /> : null}
+                    {cfg.rest && !planned.length ? <Badge label="Descanso" color={colors.textSecondary} /> : null}
                     {cfg.reminder ? <Badge label={`⏰ ${cfg.reminder}`} color={colors.warning} /> : null}
-                    {!planned.length && !cfg.rest ? <Text style={styles.free}>Boş gün · eklemek için dokun</Text> : null}
+                    {!planned.length && !cfg.rest ? <Text style={styles.free}>Dia livre · toque para adicionar</Text> : null}
                   </View>
                 </View>
                 <Pencil color={colors.textMuted} size={16} />
@@ -156,12 +156,12 @@ const WeekPlan = ({ navigation }) => {
                       {t.name}
                     </Text>
                     {done ? (
-                      <Badge label="Yapıldı" />
+                      <Badge label="Feito" />
                     ) : missed ? (
-                      <Badge label="Kaçırıldı" color={colors.danger} />
+                      <Badge label="Perdido" color={colors.danger} />
                     ) : isToday ? (
                       <TouchableOpacity style={styles.startBtn} onPress={() => startWorkout(t, key)}>
-                        <Text style={styles.startText}>Başla</Text>
+                        <Text style={styles.startText}>Iniciar</Text>
                       </TouchableOpacity>
                     ) : null}
                   </View>
@@ -196,25 +196,25 @@ const DaySheet = ({ dateKey, onClose }) => {
 
   return (
     <Sheet visible onClose={onClose} title={`${WEEKDAYS_LONG[dow]}, ${formatShortDate(date)}`}>
-      <SectionHeader title={`Bu tarihte (${date.getDate()} ${MONTHS[date.getMonth()]})`} style={styles.sheetSection} />
+      <SectionHeader title={`Nesta data (${date.getDate()} ${MONTHS[date.getMonth()]})`} style={styles.sheetSection} />
       {planned.length ? (
         planned.map((id) => (
           <View key={id} style={styles.sheetRow}>
             <View style={[styles.itemDot, { backgroundColor: templatesById[id].color || colors.primary }]} />
             <Text style={styles.sheetRowText}>{templatesById[id].name}</Text>
-            <TouchableOpacity onPress={() => removeFromDate(dateKey, id)} hitSlop={8} accessibilityLabel="Bu tarihten kaldır">
+            <TouchableOpacity onPress={() => removeFromDate(dateKey, id)} hitSlop={8} accessibilityLabel="Remover desta data">
               <X color={colors.danger} size={20} />
             </TouchableOpacity>
           </View>
         ))
       ) : (
-        <Text style={styles.sheetHint}>Bu tarihte antrenman yok.</Text>
+        <Text style={styles.sheetHint}>Nenhum treino nesta data.</Text>
       )}
       {notPlanned.length ? (
         <>
           <View style={styles.subRow}>
             <CalendarPlus color={colors.textMuted} size={14} />
-            <Text style={styles.sheetSub}>Sadece bu tarihe ekle</Text>
+            <Text style={styles.sheetSub}>Adicionar apenas nesta data</Text>
           </View>
           <View style={styles.wrap}>
             {notPlanned.map((t) => (
@@ -227,10 +227,10 @@ const DaySheet = ({ dateKey, onClose }) => {
         </>
       ) : null}
 
-      <SectionHeader title={`Her ${WEEKDAYS_LONG[dow]}`} style={styles.sheetSection} />
+      <SectionHeader title={`Toda ${WEEKDAYS_LONG[dow]}`} style={styles.sheetSection} />
       <View style={styles.subRow}>
         <Repeat color={colors.textMuted} size={13} />
-        <Text style={[styles.sheetHint, styles.flex]}>Seçtiğin antrenmanlar her hafta bu güne otomatik eklenir.</Text>
+        <Text style={[styles.sheetHint, styles.flex]}>Os treinos selecionados serão adicionados automaticamente toda semana neste dia.</Text>
       </View>
       {templates.map((t) => {
         const on = cfg.templateIds.includes(t.id);
@@ -246,7 +246,7 @@ const DaySheet = ({ dateKey, onClose }) => {
 
       <View style={[styles.sheetRow, { marginTop: 12 }]}>
         <Coffee color={colors.textSecondary} size={18} />
-        <Text style={styles.sheetRowText}>Dinlenme günü</Text>
+        <Text style={styles.sheetRowText}>Dia de descanso</Text>
         <Switch
           value={!!cfg.rest}
           onValueChange={(v) => updateDay(dow, { rest: v, templateIds: v ? [] : cfg.templateIds })}
@@ -258,12 +258,12 @@ const DaySheet = ({ dateKey, onClose }) => {
       <View style={{ marginTop: 12 }}>
         <View style={styles.subRow}>
           <Bell color={colors.textMuted} size={14} />
-          <Text style={styles.sheetSub}>Hatırlatıcı saati (her {WEEKDAYS_LONG[dow]})</Text>
+          <Text style={styles.sheetSub}>Horário do lembrete (toda {WEEKDAYS_LONG[dow]})</Text>
         </View>
         <DateField
           mode="time"
           value={cfg.reminder}
-          placeholder="Hatırlatıcı yok"
+          placeholder="Sem lembrete"
           onChange={(v) => {
             updateDay(dow, { reminder: v });
             if (!settings.notificationsEnabled) askNotifications();
@@ -274,10 +274,10 @@ const DaySheet = ({ dateKey, onClose }) => {
       {cfg.reminder && !settings.notificationsEnabled ? (
         <TouchableOpacity style={styles.notifWarn} onPress={askNotifications} activeOpacity={0.85}>
           <Bell color={colors.warning} size={16} />
-          <Text style={styles.notifWarnText}>Bildirimler kapalı — açmak için dokun</Text>
+          <Text style={styles.notifWarnText}>Notificações desativadas — toque para ativar</Text>
         </TouchableOpacity>
       ) : null}
-      <Button title="Tamam" onPress={onClose} style={{ marginTop: 4, marginBottom: 8 }} />
+      <Button title="OK" onPress={onClose} style={{ marginTop: 4, marginBottom: 8 }} />
     </Sheet>
   );
 };
@@ -289,27 +289,27 @@ const TemplatesList = ({ navigation }) => {
 
   const openActions = (t) =>
     Alert.alert(t.name, undefined, [
-      { text: 'Düzenle', onPress: () => navigation.navigate('WorkoutEditor', { templateId: t.id }) },
-      { text: 'Kopyala', onPress: () => duplicateTemplate(t.id) },
+      { text: 'Editar', onPress: () => navigation.navigate('WorkoutEditor', { templateId: t.id }) },
+      { text: 'Duplicar', onPress: () => duplicateTemplate(t.id) },
       {
-        text: 'Sil',
+        text: 'Excluir',
         style: 'destructive',
         onPress: () =>
-          Alert.alert('Antrenman silinsin mi?', 'Plandan da kaldırılacak. Geçmiş kayıtlar korunur.', [
-            { text: 'Vazgeç', style: 'cancel' },
-            { text: 'Sil', style: 'destructive', onPress: () => deleteTemplate(t.id) },
+          Alert.alert('Excluir treino?', 'Será removido do plano também. O histórico será mantido.', [
+            { text: 'Cancelar', style: 'cancel' },
+            { text: 'Excluir', style: 'destructive', onPress: () => deleteTemplate(t.id) },
           ]),
       },
-      { text: 'Kapat', style: 'cancel' },
+      { text: 'Fechar', style: 'cancel' },
     ]);
 
   if (!templates.length) {
     return (
       <EmptyState
         icon={ClipboardList}
-        title="Henüz antrenman yok"
-        text="Egzersizleri, setleri ve hedef değerleri belirleyerek ilk şablonunu oluştur."
-        action="Antrenman oluştur"
+        title="Nenhum treino ainda"
+        text="Crie seu primeiro modelo definindo exercícios, séries e valores-alvo."
+        action="Criar treino"
         onAction={() => navigation.navigate('WorkoutEditor')}
         style={{ marginTop: 40 }}
       />
@@ -318,7 +318,7 @@ const TemplatesList = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-      <Text style={styles.tip}>Dokun: düzenle · Basılı tut: kopyala / sil</Text>
+      <Text style={styles.tip}>Toque: editar · Pressione: duplicar / excluir</Text>
       {templates.map((t) => (
         <WorkoutCard
           key={t.id}
@@ -329,15 +329,15 @@ const TemplatesList = ({ navigation }) => {
         />
       ))}
       <View style={styles.tplActions}>
-        <Button title="Yeni antrenman" icon={Plus} onPress={() => navigation.navigate('WorkoutEditor')} style={{ flex: 1 }} />
+        <Button title="Novo treino" icon={Plus} onPress={() => navigation.navigate('WorkoutEditor')} style={{ flex: 1 }} />
       </View>
       <View style={styles.tplHelp}>
         <Copy color={colors.textMuted} size={14} />
-        <Text style={styles.tplHelpText}>Benzer bir program için şablonu kopyalayıp düzenleyebilirsin.</Text>
+        <Text style={styles.tplHelpText}>Duplique e edite um modelo para criar um programa semelhante.</Text>
       </View>
       <View style={styles.tplHelp}>
         <Trash2 color={colors.textMuted} size={14} />
-        <Text style={styles.tplHelpText}>Silinen şablonların geçmiş antrenman kayıtları kaybolmaz.</Text>
+        <Text style={styles.tplHelpText}>O histórico de treinos dos modelos excluídos não será perdido.</Text>
       </View>
     </ScrollView>
   );

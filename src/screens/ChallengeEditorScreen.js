@@ -34,10 +34,10 @@ const ChallengeEditorScreen = ({ navigation, route }) => {
   };
 
   const onDelete = () =>
-    Alert.alert('Meydan okuma silinsin mi?', undefined, [
-      { text: 'Vazgeç', style: 'cancel' },
+    Alert.alert('Excluir desafio?', undefined, [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Sil',
+        text: 'Excluir',
         style: 'destructive',
         onPress: () => {
           deleteChallenge(existing.id);
@@ -50,26 +50,26 @@ const ChallengeEditorScreen = ({ navigation, route }) => {
     <Screen edges={['top', 'bottom']}>
       <Header
         back
-        title={existing ? 'Düzenle' : 'Yeni meydan okuma'}
-        right={existing ? <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Sil" /> : null}
+        title={existing ? 'Editar' : 'Novo desafio'}
+        right={existing ? <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Excluir" /> : null}
       />
       <KeyboardAwareScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <Field label="Görev" value={title} onChangeText={setTitle} placeholder="Örn. Her gün 50 şınav" />
+        <Field label="Tarefa" value={title} onChangeText={setTitle} placeholder="Ex.: 50 flexões todo dia" />
         <Field
-          label="Açıklama (isteğe bağlı)"
+          label="Descrição (opcional)"
           value={description}
           onChangeText={setDescription}
-          placeholder="Kurallar, motivasyon..."
+          placeholder="Regras, motivação..."
           multiline
         />
 
-        <Text style={styles.label}>Sıklık</Text>
+        <Text style={styles.label}>Frequência</Text>
         <Segmented
           value={frequency}
           onChange={setFrequency}
           options={[
-            { value: 'daily', label: 'Her gün' },
-            { value: 'weekly', label: 'Haftada X kez' },
+            { value: 'daily', label: 'Todo dia' },
+            { value: 'weekly', label: 'X vezes por semana' },
           ]}
           style={{ marginBottom: 12 }}
         />
@@ -81,20 +81,20 @@ const ChallengeEditorScreen = ({ navigation, route }) => {
           </View>
         ) : null}
 
-        <Text style={[styles.label, { marginTop: 8 }]}>Süre</Text>
+        <Text style={[styles.label, { marginTop: 8 }]}>Duração</Text>
         <View style={styles.wrap}>
           {DURATIONS.map((d) => (
-            <Chip key={d} label={`${d} gün`} onPress={() => setDuration(d)} />
+            <Chip key={d} label={`${d} dias`} onPress={() => setDuration(d)} />
           ))}
         </View>
         <View style={styles.row}>
-          <DateField label="Başlangıç" value={startDate} onChange={setStartDate} style={{ flex: 1 }} />
-          <DateField label="Bitiş" value={endDate} onChange={setEndDate} style={{ flex: 1 }} />
+          <DateField label="Início" value={startDate} onChange={setStartDate} style={{ flex: 1 }} />
+          <DateField label="Fim" value={endDate} onChange={setEndDate} style={{ flex: 1 }} />
         </View>
-        {endDate < startDate ? <Text style={styles.error}>Bitiş tarihi başlangıçtan önce olamaz.</Text> : null}
+        {endDate < startDate ? <Text style={styles.error}>A data final não pode ser anterior à data inicial.</Text> : null}
       </KeyboardAwareScrollView>
       <View style={styles.footer}>
-        <Button title="Kaydet" onPress={save} disabled={!valid} />
+        <Button title="Salvar" onPress={save} disabled={!valid} />
       </View>
     </Screen>
   );

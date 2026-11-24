@@ -37,7 +37,7 @@ const WellbeingRow = ({ icon: Icon, label, value, max = 5 }) => (
 );
 
 const Diff = ({ value, format }) => {
-  if (value === null || value === undefined) return <Text style={styles.first}>İlk kez</Text>;
+  if (value === null || value === undefined) return <Text style={styles.first}>Primeira vez</Text>;
   const Icon = value > 0 ? TrendingUp : value < 0 ? TrendingDown : Minus;
   const color = value > 0 ? colors.primary : value < 0 ? colors.danger : colors.textMuted;
   return (
@@ -69,8 +69,8 @@ const SessionDetailScreen = ({ navigation, route }) => {
   if (!session || !data) {
     return (
       <Screen edges={['top', 'bottom']}>
-        <Header back title="Antrenman" />
-        <EmptyState title="Kayıt bulunamadı" />
+        <Header back title="Treino" />
+        <EmptyState title="Registro não encontrado" />
       </Screen>
     );
   }
@@ -81,10 +81,10 @@ const SessionDetailScreen = ({ navigation, route }) => {
   const template = session.templateId ? templatesById[session.templateId] : null;
 
   const onDelete = () =>
-    Alert.alert('Kayıt silinsin mi?', 'Bu antrenman geçmişten ve istatistiklerden kaldırılacak.', [
-      { text: 'Vazgeç', style: 'cancel' },
+    Alert.alert('Excluir registro?', 'Este treino será removido do histórico e das estatísticas.', [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Sil',
+        text: 'Excluir',
         style: 'destructive',
         onPress: () => {
           navigation.goBack();
@@ -95,17 +95,17 @@ const SessionDetailScreen = ({ navigation, route }) => {
 
   const onUpdatePlan = () =>
     Alert.alert(
-      template ? 'Şablon güncellensin mi?' : 'Şablon olarak kaydedilsin mi?',
+      template ? 'Atualizar modelo?' : 'Salvar como modelo?',
       template
-        ? `“${template.name}” hedefleri bu antrenmandaki gerçek sonuçlarınla değiştirilecek.`
-        : 'Bu antrenman yeni bir şablon olarak kaydedilecek.',
+        ? `As metas de “${template.name}” serão substituídas pelos resultados reais deste treino.`
+        : 'Este treino será salvo como um novo modelo.',
       [
-        { text: 'Vazgeç', style: 'cancel' },
+        { text: 'Cancelar', style: 'cancel' },
         {
-          text: template ? 'Güncelle' : 'Kaydet',
+          text: template ? 'Atualizar' : 'Salvar',
           onPress: () => {
             updateTemplateFromSession(session.id);
-            Alert.alert('Hazır', 'Planın güncellendi.');
+            Alert.alert('Pronto', 'Seu plano foi atualizado.');
           },
         },
       ]
@@ -129,29 +129,29 @@ const SessionDetailScreen = ({ navigation, route }) => {
     <Screen edges={['top', 'bottom']}>
       <Header
         back
-        title={justFinished ? 'Antrenman tamamlandı' : session.name}
+        title={justFinished ? 'Treino concluído' : session.name}
         subtitle={formatDateTime(session.startedAt)}
-        right={<IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Sil" />}
+        right={<IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Excluir" />}
       />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {justFinished ? (
           <View style={styles.hero}>
             <Sparkles color={colors.onPrimary} size={28} />
-            <Text style={styles.heroTitle}>Tebrikler! 🎉</Text>
-            <Text style={styles.heroText}>“{session.name}” kaydedildi. İşte bugünkü sonuçların.</Text>
+            <Text style={styles.heroTitle}>Parabéns! 🎉</Text>
+            <Text style={styles.heroText}>”{session.name}” foi salvo. Aqui estão seus resultados de hoje.</Text>
           </View>
         ) : null}
 
         <Card style={styles.stats}>
-          <Stat label="Süre" value={formatDuration(session.durationSec)} />
-          <Stat label="Set" value={`${summary.sets}`} />
-          <Stat label="Hacim (kg)" value={fmtBig(summary.volume)} accent />
-          {summary.distance ? <Stat label="Mesafe" value={`${fmtNum(summary.distance, 2)} km`} /> : null}
+          <Stat label="Tempo" value={formatDuration(session.durationSec)} />
+          <Stat label="Série" value={`${summary.sets}`} />
+          <Stat label="Volume (kg)" value={fmtBig(summary.volume)} accent />
+          {summary.distance ? <Stat label="Distância" value={`${fmtNum(summary.distance, 2)} km`} /> : null}
         </Card>
 
         {records.length ? (
           <>
-            <SectionHeader title="Yeni rekorlar 🏆" />
+            <SectionHeader title="Novos recordes 🏆" />
             {records.map((r) => (
               <View key={r.exerciseId} style={styles.record}>
                 <Trophy color={colors.warning} size={20} />
@@ -165,7 +165,7 @@ const SessionDetailScreen = ({ navigation, route }) => {
           </>
         ) : null}
 
-        <SectionHeader title="Önceki antrenmanla karşılaştırma" />
+        <SectionHeader title="Comparação com treino anterior" />
         {comparison.length ? (
           comparison.map((c) => (
             <Card
@@ -175,18 +175,18 @@ const SessionDetailScreen = ({ navigation, route }) => {
             >
               <View style={styles.compareHead}>
                 <Text style={styles.compareName} numberOfLines={1}>
-                  {c.exercise?.name || 'Silinmiş egzersiz'}
+                  {c.exercise?.name || 'Exercício excluído'}
                 </Text>
                 <Diff value={c.diff} format={c.metric.format} />
               </View>
               <View style={styles.compareRow}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.compareLabel}>Bugün</Text>
+                  <Text style={styles.compareLabel}>Hoje</Text>
                   <Text style={styles.compareValue}>{c.metric.format(c.current[c.metric.key])}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.compareLabel}>
-                    {c.previousDate ? formatShortDate(c.previousDate) : 'Önceki'}
+                    {c.previousDate ? formatShortDate(c.previousDate) : 'Anterior'}
                   </Text>
                   <Text style={[styles.compareValue, { color: colors.textSecondary }]}>
                     {c.previous ? c.metric.format(c.previous[c.metric.key]) : '—'}
@@ -194,7 +194,7 @@ const SessionDetailScreen = ({ navigation, route }) => {
                 </View>
                 {c.exercise?.type === 'weight' ? (
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.compareLabel}>Hacim farkı</Text>
+                    <Text style={styles.compareLabel}>Diferença de volume</Text>
                     {c.volumeDiff === null ? (
                       <Text style={styles.compareValue}>{fmtBig(c.current.volume)}</Text>
                     ) : (
@@ -208,37 +208,37 @@ const SessionDetailScreen = ({ navigation, route }) => {
             </Card>
           ))
         ) : (
-          <Text style={styles.muted}>Tamamlanan egzersiz yok.</Text>
+          <Text style={styles.muted}>Nenhum exercício concluído.</Text>
         )}
 
-        <SectionHeader title="Kendini nasıl hissettin?" />
+        <SectionHeader title="Como você se sentiu?" />
         <Card>
-          <Text style={styles.wbTitle}>Öncesi</Text>
+          <Text style={styles.wbTitle}>Antes</Text>
           {before && !before.skipped ? (
             <>
-              <WellbeingRow icon={Zap} label="Enerji" value={before.energy} />
-              <WellbeingRow icon={Moon} label="Uyku" value={before.sleep} />
-              <WellbeingRow icon={Smile} label="Ruh hali" value={before.mood} />
+              <WellbeingRow icon={Zap} label="Energia" value={before.energy} />
+              <WellbeingRow icon={Moon} label="Sono" value={before.sleep} />
+              <WellbeingRow icon={Smile} label="Humor" value={before.mood} />
             </>
           ) : (
-            <Text style={styles.muted}>Değerlendirilmedi</Text>
+            <Text style={styles.muted}>Não avaliado</Text>
           )}
           <View style={styles.sep} />
-          <Text style={styles.wbTitle}>Sonrası</Text>
+          <Text style={styles.wbTitle}>Depois</Text>
           {after && !after.skipped ? (
             <>
-              <WellbeingRow icon={Flame} label="Yüklenme" value={after.load} max={10} />
-              <WellbeingRow icon={Battery} label="Yorgunluk" value={after.fatigue} />
+              <WellbeingRow icon={Flame} label="Esforço" value={after.load} max={10} />
+              <WellbeingRow icon={Battery} label="Fadiga" value={after.fatigue} />
               {after.comment ? <Text style={styles.comment}>“{after.comment}”</Text> : null}
             </>
           ) : (
-            <Text style={styles.muted}>Değerlendirilmedi</Text>
+            <Text style={styles.muted}>Não avaliado</Text>
           )}
         </Card>
 
         {session.note ? (
           <>
-            <SectionHeader title="Not" />
+            <SectionHeader title="Nota" />
             <Card>
               <Text style={styles.comment}>{session.note}</Text>
             </Card>
@@ -247,13 +247,13 @@ const SessionDetailScreen = ({ navigation, route }) => {
 
         <View style={styles.actions}>
           <Button
-            title={template ? 'Planı bu sonuçlarla güncelle' : 'Şablon olarak kaydet'}
+            title={template ? 'Atualizar plano com estes resultados' : 'Salvar como modelo'}
             icon={ClipboardCheck}
             variant="outline"
             onPress={onUpdatePlan}
           />
-          <Button title="Bu antrenmanı tekrarla" icon={RotateCcw} variant="secondary" onPress={onRepeat} />
-          {justFinished ? <Button title="Tamam" onPress={() => navigation.goBack()} /> : null}
+          <Button title="Repetir este treino" icon={RotateCcw} variant="secondary" onPress={onRepeat} />
+          {justFinished ? <Button title="OK" onPress={() => navigation.goBack()} /> : null}
         </View>
       </ScrollView>
     </Screen>

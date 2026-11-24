@@ -19,7 +19,7 @@ const Sheet = ({ visible, onClose, title, children, footer, scroll = true }) => 
             <Text style={styles.title} numberOfLines={1}>
               {title}
             </Text>
-            <TouchableOpacity style={styles.close} onPress={onClose} hitSlop={10} accessibilityLabel="Kapat">
+            <TouchableOpacity style={styles.close} onPress={onClose} hitSlop={10} accessibilityLabel="Fechar">
               <X color={colors.textSecondary} size={20} />
             </TouchableOpacity>
           </View>

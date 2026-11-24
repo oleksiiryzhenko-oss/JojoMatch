@@ -12,9 +12,9 @@ const item = (id, exerciseId, count, values, restSeconds = 90) => ({
 const DEFAULT_TEMPLATES = [
   {
     id: 'tpl_full_a',
-    name: 'Tüm Vücut A',
+    name: 'Corpo Todo A',
     color: '#FFC414',
-    notes: 'Haftada 2–3 kez yapılabilecek temel antrenman.',
+    notes: 'Treino básico para 2–3 vezes por semana.',
     exercises: [
       item('fa1', 'squat', 3, { weight: 40, reps: 10 }, 120),
       item('fa2', 'bench_press', 3, { weight: 30, reps: 10 }, 120),
@@ -24,7 +24,7 @@ const DEFAULT_TEMPLATES = [
   },
   {
     id: 'tpl_upper',
-    name: 'Üst Vücut',
+    name: 'Superior',
     color: '#5CC8FF',
     notes: '',
     exercises: [
@@ -37,9 +37,9 @@ const DEFAULT_TEMPLATES = [
   },
   {
     id: 'tpl_cardio',
-    name: 'Kardiyo & Karın',
+    name: 'Cardio & Abdômen',
     color: '#FF8A3D',
-    notes: 'Hafif tempo, nabız kontrolü.',
+    notes: 'Ritmo leve, controle de frequência cardíaca.',
     exercises: [
       item('ca1', 'run', 1, { distance: 3, time: 1200 }, 60),
       item('ca2', 'crunch', 3, { reps: 20 }, 45),

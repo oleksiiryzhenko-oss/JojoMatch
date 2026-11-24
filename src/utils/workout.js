@@ -21,7 +21,7 @@ export const formatSet = (set, type) => {
   if (!set) return '—';
   switch (type) {
     case 'reps':
-      return `${num(set.reps)} tekrar`;
+      return `${num(set.reps)} rep`;
     case 'time':
       return formatSeconds(set.time);
     case 'distance': {
@@ -63,7 +63,7 @@ export const makeSessionItem = (exerciseId, templateSets = [{}], restSeconds = 9
 export const buildSessionFromTemplate = (template) => ({
   id: genId(),
   templateId: template?.id || null,
-  name: template?.name || 'Serbest Antrenman',
+  name: template?.name || 'Treino Livre',
   color: template?.color || null,
   startedAt: new Date().toISOString(),
   plannedDate: dayKey(),
@@ -131,13 +131,13 @@ export const summarizeSession = (session) => {
 export const primaryMetric = (type) => {
   switch (type) {
     case 'reps':
-      return { key: 'bestReps', label: 'En çok tekrar', format: (v) => `${Math.round(v)}` };
+      return { key: 'bestReps', label: 'Máx. repetições', format: (v) => `${Math.round(v)}` };
     case 'time':
-      return { key: 'bestTime', label: 'En uzun süre', format: (v) => formatSeconds(v) };
+      return { key: 'bestTime', label: 'Maior tempo', format: (v) => formatSeconds(v) };
     case 'distance':
-      return { key: 'bestDistance', label: 'En uzun mesafe', format: (v) => `${fmtNum(v, 2)} km` };
+      return { key: 'bestDistance', label: 'Maior distância', format: (v) => `${fmtNum(v, 2)} km` };
     default:
-      return { key: 'bestWeight', label: 'En yüksek ağırlık', format: (v) => `${fmtNum(v)} kg` };
+      return { key: 'bestWeight', label: 'Maior carga', format: (v) => `${fmtNum(v)} kg` };
   }
 };
 
@@ -200,7 +200,7 @@ export const detectNewRecords = (session, sessions, exercisesById) => {
     if (cur[metric.key] > prevVal) {
       out.push({ exerciseId: ex.id, name: ex.name, label: metric.label, value: metric.format(cur[metric.key]) });
     } else if (ex.type === 'weight' && cur.volume > (prev.volume?.value || 0)) {
-      out.push({ exerciseId: ex.id, name: ex.name, label: 'En yüksek hacim', value: `${fmtNum(cur.volume, 0)} kg` });
+      out.push({ exerciseId: ex.id, name: ex.name, label: 'Maior volume', value: `${fmtNum(cur.volume, 0)} kg` });
     }
   });
   return out;
@@ -307,11 +307,11 @@ export const totalDuration = (sessions) => sessions.reduce((acc, s) => acc + (s.
 
 // ================= GOALS =================
 export const GOAL_TYPES = {
-  workouts: { key: 'workouts', label: 'Antrenman sayısı', unit: 'antrenman', hint: 'Örn. ayda 12 antrenman' },
-  exercise: { key: 'exercise', label: 'Egzersiz rekoru', unit: '', hint: 'Örn. Squat 100 kg' },
-  minutes: { key: 'minutes', label: 'Toplam süre', unit: 'dk', hint: 'Örn. bu ay 600 dakika' },
-  bodyweight: { key: 'bodyweight', label: 'Vücut ağırlığı', unit: 'kg', hint: 'Örn. 75 kg’a ulaşmak' },
-  custom: { key: 'custom', label: 'Kişisel hedef', unit: '', hint: 'Kendi ölçünü belirle' },
+  workouts: { key: 'workouts', label: 'Nº de treinos', unit: 'treino', hint: 'Ex.: 12 treinos por mês' },
+  exercise: { key: 'exercise', label: 'Recorde de exercício', unit: '', hint: 'Ex.: Agachamento 100 kg' },
+  minutes: { key: 'minutes', label: 'Tempo total', unit: 'min', hint: 'Ex.: 600 minutos neste mês' },
+  bodyweight: { key: 'bodyweight', label: 'Peso corporal', unit: 'kg', hint: 'Ex.: chegar a 75 kg' },
+  custom: { key: 'custom', label: 'Meta personalizada', unit: '', hint: 'Defina sua própria métrica' },
 };
 
 const inGoalRange = (goal, date) => {
@@ -346,7 +346,7 @@ export const goalProgress = (goal, { sessions, measurements, exercisesById }) =>
       if (ex?.type === 'time') {
         unit = '';
         format = (v) => formatSeconds(v);
-      } else unit = ex?.type === 'reps' ? 'tekrar' : ex?.type === 'distance' ? 'km' : 'kg';
+      } else unit = ex?.type === 'reps' ? 'rep' : ex?.type === 'distance' ? 'km' : 'kg';
       break;
     }
     case 'bodyweight': {

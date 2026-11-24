@@ -114,7 +114,7 @@ const TodayScreen = ({ navigation }) => {
               <Timer color={colors.primary} size={24} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.activeLabel}>DEVAM EDEN ANTRENMAN</Text>
+              <Text style={styles.activeLabel}>TREINO EM ANDAMENTO</Text>
               <Text style={styles.activeName} numberOfLines={1}>
                 {activeSession.name}
               </Text>
@@ -127,9 +127,9 @@ const TodayScreen = ({ navigation }) => {
         {/* WEEK STRIP */}
         <Card style={styles.weekCard}>
           <View style={styles.weekTop}>
-            <Text style={styles.weekTitle}>Bu hafta</Text>
+            <Text style={styles.weekTitle}>Esta semana</Text>
             <Text style={styles.weekCount}>
-              <Text style={{ color: colors.primary }}>{weekSessions.length}</Text>/{settings.weeklyTarget} antrenman
+              <Text style={{ color: colors.primary }}>{weekSessions.length}</Text>/{settings.weeklyTarget} treinos
             </Text>
           </View>
           <ProgressBar progress={weekSessions.length / (settings.weeklyTarget || 1)} style={{ marginBottom: 14 }} />
@@ -168,13 +168,13 @@ const TodayScreen = ({ navigation }) => {
           <View style={styles.reminder}>
             <Bell color={colors.warning} size={18} />
             <Text style={styles.reminderText}>
-              Hatırlatıcı: bugün saat <Text style={{ fontWeight: '900' }}>{dayConfig.reminder}</Text>’de antrenmanın var.
+              Lembrete: seu treino é hoje às <Text style={{ fontWeight: '900' }}>{dayConfig.reminder}</Text>.
             </Text>
           </View>
         ) : null}
 
         {/* TODAY PLAN */}
-        <SectionHeader title="Bugünün planı" action="Planı düzenle" onAction={() => navigation.navigate('PlanTab')} />
+        <SectionHeader title="Plano de hoje" action="Editar plano" onAction={() => navigation.navigate('PlanTab')} />
         {plannedIds.length ? (
           plannedIds.map((id) => {
             const done = isPlannedDone(sessions, today, id);
@@ -199,15 +199,15 @@ const TodayScreen = ({ navigation }) => {
           <Card style={styles.restCard}>
             <Coffee color={colors.primary} size={28} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.restTitle}>Bugün dinlenme günü</Text>
-              <Text style={styles.restText}>Kaslar dinlenirken güçlenir. Hafif esneme iyi gelebilir.</Text>
+              <Text style={styles.restTitle}>Hoje é dia de descanso</Text>
+              <Text style={styles.restText}>Os músculos ficam mais fortes durante o descanso. Um alongamento leve pode ajudar.</Text>
             </View>
           </Card>
         ) : (
           <Card>
             <EmptyState
-              title="Bugün için plan yok"
-              text="Hazır bir antrenman seç ya da boş bir antrenmanla hemen başla."
+              title="Sem plano para hoje"
+              text="Escolha um treino pronto ou comece um treino em branco."
               style={{ paddingVertical: 8 }}
             />
           </Card>
@@ -215,46 +215,46 @@ const TodayScreen = ({ navigation }) => {
 
         <View style={styles.quickRow}>
           <Button
-            title="Şablondan başla"
+            title="Iniciar modelo"
             icon={Play}
             onPress={() => setPickerOpen(true)}
             style={{ flex: 1 }}
             disabled={!templates.length}
           />
-          <Button title="Boş antrenman" icon={Plus} variant="secondary" onPress={() => startWorkout(null)} style={{ flex: 1 }} />
+          <Button title="Treino em branco" icon={Plus} variant="secondary" onPress={() => startWorkout(null)} style={{ flex: 1 }} />
         </View>
 
         {/* MISSED */}
         {missed.length ? (
           <>
-            <SectionHeader title="Kaçırılan antrenmanlar" />
+            <SectionHeader title="Treinos perdidos" />
             {missed.map((m) => (
               <Card key={`${m.date}-${m.templateId}`} style={styles.missedCard}>
                 <View style={styles.missedTop}>
                   <AlertTriangle color={colors.danger} size={18} />
                   <View style={{ flex: 1 }}>
                     <Text style={styles.missedName}>{templatesById[m.templateId]?.name}</Text>
-                    <Text style={styles.missedDate}>{formatShortDate(fromDayKey(m.date))} planlanmıştı</Text>
+                    <Text style={styles.missedDate}>{formatShortDate(fromDayKey(m.date))} — estava planejado</Text>
                   </View>
                 </View>
                 <View style={styles.missedActions}>
                   <Button
                     small
-                    title="Bugüne taşı"
+                    title="Mover para hoje"
                     icon={ArrowRight}
                     onPress={() => moveWorkout(m.date, todayKey, m.templateId)}
                     style={{ flex: 1 }}
                   />
                   <Button
                     small
-                    title="Yarına"
+                    title="Amanhã"
                     variant="secondary"
                     onPress={() => moveWorkout(m.date, dayKey(addDays(today, 1)), m.templateId)}
                     style={{ flex: 1 }}
                   />
                   <Button
                     small
-                    title="Atla"
+                    title="Pular"
                     variant="ghost"
                     onPress={() => removeFromDate(m.date, m.templateId)}
                   />
@@ -267,7 +267,7 @@ const TodayScreen = ({ navigation }) => {
         {/* CHALLENGES */}
         {activeChallenges.length ? (
           <>
-            <SectionHeader title="Meydan okumalar" action="Tümü" onAction={() => navigation.navigate('Challenges')} />
+            <SectionHeader title="Desafios" action="Todos" onAction={() => navigation.navigate('Challenges')} />
             {activeChallenges.map((c) => {
               const p = challengeProgress(c);
               return (
@@ -275,14 +275,14 @@ const TodayScreen = ({ navigation }) => {
                   <View style={{ flex: 1 }}>
                     <Text style={styles.challengeTitle}>{c.title}</Text>
                     <Text style={styles.challengeMeta}>
-                      {p.done}/{p.required} · {p.daysLeft} gün kaldı
+                      {p.done}/{p.required} · {p.daysLeft} dias restantes
                     </Text>
                     <ProgressBar progress={p.pct} height={6} style={{ marginTop: 8 }} />
                   </View>
                   <TouchableOpacity
                     style={[styles.checkBtn, p.checkedToday && styles.checkBtnOn]}
                     onPress={() => toggleCheckin(c.id)}
-                    accessibilityLabel="Bugün tamamlandı"
+                    accessibilityLabel="Concluído hoje"
                   >
                     <Check color={p.checkedToday ? colors.onPrimary : colors.textMuted} size={22} strokeWidth={3} />
                   </TouchableOpacity>
@@ -295,7 +295,7 @@ const TodayScreen = ({ navigation }) => {
         {/* LAST WORKOUT */}
         {lastSession ? (
           <>
-            <SectionHeader title="Son antrenman" action="Geçmiş" onAction={() => navigation.navigate('History')} />
+            <SectionHeader title="Último treino" action="Histórico" onAction={() => navigation.navigate('History')} />
             <Card onPress={() => navigation.navigate('SessionDetail', { sessionId: lastSession.id })}>
               <View style={styles.lastTop}>
                 <View style={{ flex: 1 }}>
@@ -307,15 +307,15 @@ const TodayScreen = ({ navigation }) => {
               <View style={styles.lastStats}>
                 <View style={styles.lastStat}>
                   <Text style={styles.lastValue}>{formatDuration(lastSession.durationSec)}</Text>
-                  <Text style={styles.lastLabel}>Süre</Text>
+                  <Text style={styles.lastLabel}>Duração</Text>
                 </View>
                 <View style={styles.lastStat}>
                   <Text style={styles.lastValue}>{lastSummary.sets}</Text>
-                  <Text style={styles.lastLabel}>Set</Text>
+                  <Text style={styles.lastLabel}>Séries</Text>
                 </View>
                 <View style={styles.lastStat}>
                   <Text style={styles.lastValue}>{fmtBig(lastSummary.volume)}</Text>
-                  <Text style={styles.lastLabel}>Hacim (kg)</Text>
+                  <Text style={styles.lastLabel}>Volume (kg)</Text>
                 </View>
               </View>
             </Card>
@@ -324,16 +324,16 @@ const TodayScreen = ({ navigation }) => {
           <Card style={[styles.restCard, { marginTop: 24 }]}>
             <Zap color={colors.primary} size={26} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.restTitle}>İlk antrenmanını kaydet</Text>
+              <Text style={styles.restTitle}>Registre seu primeiro treino</Text>
               <Text style={styles.restText}>
-                Antrenman bitince nasıl hissettiğini değerlendir ve bir sonraki seferde sonuçlarını kıyasla.
+                Avalie como se sentiu depois do treino e compare seus resultados na próxima vez.
               </Text>
             </View>
           </Card>
         )}
       </ScrollView>
 
-      <Sheet visible={pickerOpen} onClose={() => setPickerOpen(false)} title="Antrenman seç">
+      <Sheet visible={pickerOpen} onClose={() => setPickerOpen(false)} title="Escolher treino">
         {templates.map((t) => (
           <WorkoutCard
             key={t.id}

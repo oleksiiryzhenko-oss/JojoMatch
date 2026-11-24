@@ -13,15 +13,15 @@ const AppContext = createContext();
 export const BACKUP_VERSION = 1;
 
 export const MEASURE_FIELDS = [
-  { key: 'weight', label: 'Kilo', unit: 'kg' },
-  { key: 'bodyFat', label: 'Yağ oranı', unit: '%' },
-  { key: 'chest', label: 'Göğüs', unit: 'cm' },
-  { key: 'waist', label: 'Bel', unit: 'cm' },
-  { key: 'hips', label: 'Kalça', unit: 'cm' },
-  { key: 'arm', label: 'Kol', unit: 'cm' },
-  { key: 'thigh', label: 'Bacak', unit: 'cm' },
-  { key: 'calf', label: 'Baldır', unit: 'cm' },
-  { key: 'neck', label: 'Boyun', unit: 'cm' },
+  { key: 'weight', label: 'Peso', unit: 'kg' },
+  { key: 'bodyFat', label: '% Gordura', unit: '%' },
+  { key: 'chest', label: 'Peito', unit: 'cm' },
+  { key: 'waist', label: 'Cintura', unit: 'cm' },
+  { key: 'hips', label: 'Quadril', unit: 'cm' },
+  { key: 'arm', label: 'Braço', unit: 'cm' },
+  { key: 'thigh', label: 'Coxa', unit: 'cm' },
+  { key: 'calf', label: 'Panturrilha', unit: 'cm' },
+  { key: 'neck', label: 'Pescoço', unit: 'cm' },
 ];
 
 const DEFAULT_SETTINGS = {
@@ -175,7 +175,7 @@ export const AppProvider = ({ children }) => {
     const copy = {
       ...JSON.parse(JSON.stringify(src)),
       id: newId,
-      name: `${src.name} (kopya)`,
+      name: `${src.name} (cópia)`,
       createdAt: now(),
     };
     copy.exercises = copy.exercises.map((it) => ({ ...it, id: genId() }));
@@ -350,7 +350,7 @@ export const AppProvider = ({ children }) => {
   const importData = (payload) => {
     const data = payload?.data;
     if (payload?.app !== 'JojoMatch' || !data || !Array.isArray(data.sessions)) {
-      throw new Error('Geçersiz yedek dosyası');
+      throw new Error('Arquivo de backup inválido');
     }
     applyData({ ...data, settings: { ...(data.settings || {}), onboarded: true } });
   };

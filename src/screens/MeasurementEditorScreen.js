@@ -49,10 +49,10 @@ const MeasurementEditorScreen = ({ navigation, route }) => {
   };
 
   const onDelete = () =>
-    Alert.alert('Ölçüm silinsin mi?', undefined, [
-      { text: 'Vazgeç', style: 'cancel' },
+    Alert.alert('Excluir medida?', undefined, [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Sil',
+        text: 'Excluir',
         style: 'destructive',
         onPress: () => {
           deleteMeasurement(existing.id);
@@ -65,13 +65,13 @@ const MeasurementEditorScreen = ({ navigation, route }) => {
     <Screen edges={['top', 'bottom']}>
       <Header
         back
-        title={existing ? 'Ölçümü düzenle' : 'Yeni ölçüm'}
-        right={existing ? <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Sil" /> : null}
+        title={existing ? 'Editar medida' : 'Nova medida'}
+        right={existing ? <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Excluir" /> : null}
       />
       <KeyboardAwareScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <DateField label="Tarih" value={date} onChange={setDate} />
+        <DateField label="Data" value={date} onChange={setDate} />
 
-        <Text style={styles.label}>Takip edilen ölçüler</Text>
+        <Text style={styles.label}>Medidas acompanhadas</Text>
         <View style={styles.wrap}>
           {MEASURE_FIELDS.map((f) => (
             <Chip key={f.key} label={f.label} active={settings.measureFields.includes(f.key)} onPress={() => toggleField(f.key)} />
@@ -93,10 +93,10 @@ const MeasurementEditorScreen = ({ navigation, route }) => {
           ))}
         </View>
 
-        <Field label="Not" value={note} onChangeText={setNote} placeholder="Sabah, aç karnına..." multiline />
+        <Field label="Nota" value={note} onChangeText={setNote} placeholder="Manhã, em jejum..." multiline />
       </KeyboardAwareScrollView>
       <View style={styles.footer}>
-        <Button title="Kaydet" onPress={save} disabled={!canSave} />
+        <Button title="Salvar" onPress={save} disabled={!canSave} />
       </View>
     </Screen>
   );

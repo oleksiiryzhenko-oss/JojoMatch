@@ -9,9 +9,9 @@ import { useApp } from '../context/AppContext';
 import { Screen, Header, Card, IconButton, EmptyState, ProgressBar, Badge, SectionHeader } from '../components/ui';
 
 const STATUS = {
-  active: { label: 'Aktif', color: colors.primary },
-  upcoming: { label: 'Yakında', color: colors.info },
-  ended: { label: 'Bitti', color: colors.textMuted },
+  active: { label: 'Ativo', color: colors.primary },
+  upcoming: { label: 'Em breve', color: colors.info },
+  ended: { label: 'Encerrado', color: colors.textMuted },
 };
 
 const ChallengesScreen = ({ navigation }) => {
@@ -27,14 +27,14 @@ const ChallengesScreen = ({ navigation }) => {
     <Screen edges={['top', 'bottom']}>
       <Header
         back
-        title="Meydan okumalar"
+        title="Desafios"
         right={
           <IconButton
             icon={Plus}
             bg={colors.primary}
             color={colors.onPrimary}
             onPress={() => navigation.navigate('ChallengeEditor')}
-            label="Yeni meydan okuma"
+            label="Novo desafio"
           />
         }
       />
@@ -42,9 +42,9 @@ const ChallengesScreen = ({ navigation }) => {
         {!challenges.length ? (
           <EmptyState
             icon={Swords}
-            title="Kendine meydan oku"
-            text="Örneğin “30 gün boyunca her gün 50 şınav” veya “haftada 3 kez 5 km koşu”. Görevi, süreyi ve sıklığı sen belirle."
-            action="Meydan okuma oluştur"
+            title="Desafie-se"
+            text="Por exemplo “50 flexões todos os dias por 30 dias” ou “corrida de 5 km 3 vezes por semana”. Defina a tarefa, duração e frequência."
+            action="Criar desafio"
             onAction={() => navigation.navigate('ChallengeEditor')}
             style={{ marginTop: 40 }}
           />
@@ -71,7 +71,7 @@ const ChallengesScreen = ({ navigation }) => {
                     </TouchableOpacity>
                   </View>
                   <View style={styles.metaRow}>
-                    <Badge label={c.frequency === 'weekly' ? `Haftada ${c.timesPerWeek}×` : 'Her gün'} />
+                    <Badge label={c.frequency === 'weekly' ? `${c.timesPerWeek}× por semana` : 'Todo dia'} />
                     <Text style={styles.meta}>
                       {formatDate(fromDayKey(c.startDate))} – {formatDate(fromDayKey(c.endDate))}
                     </Text>
@@ -79,10 +79,10 @@ const ChallengesScreen = ({ navigation }) => {
                   <ProgressBar progress={p.pct} style={{ marginTop: 12 }} />
                   <View style={styles.foot}>
                     <Text style={styles.count}>
-                      <Text style={{ color: colors.primary }}>{p.done}</Text>/{p.required} tamamlandı
+                      <Text style={{ color: colors.primary }}>{p.done}</Text>/{p.required} concluído(s)
                     </Text>
                     <Text style={styles.meta}>
-                      {p.completed ? 'Başarıldı 🏆' : p.status === 'active' ? `${p.daysLeft} gün kaldı` : ''}
+                      {p.completed ? 'Concluído 🏆' : p.status === 'active' ? `${p.daysLeft} dias restantes` : ''}
                     </Text>
                   </View>
 

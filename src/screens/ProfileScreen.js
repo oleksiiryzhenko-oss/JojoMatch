@@ -63,26 +63,26 @@ const ProfileScreen = ({ navigation }) => {
 
   const onReset = () =>
     Alert.alert(
-      'Tüm veriler silinsin mi?',
-      'Antrenmanlar, planlar, ölçümler, hedefler ve meydan okumalar kalıcı olarak silinecek. Bu işlem geri alınamaz.',
+      'Excluir todos os dados?',
+      'Treinos, planos, medidas, metas e desafios serão excluídos permanentemente. Esta ação não pode ser desfeita.',
       [
-        { text: 'Vazgeç', style: 'cancel' },
-        { text: 'Hepsini sil', style: 'destructive', onPress: resetAll },
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir tudo', style: 'destructive', onPress: resetAll },
       ]
     );
 
   return (
     <Screen>
-      <Header title="Profil" />
+      <Header title="Perfil" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Card style={styles.profile}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{initials(settings.name || 'J M')}</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.name}>{settings.name || 'Sporcu'}</Text>
+            <Text style={styles.name}>{settings.name || 'Atleta'}</Text>
             <Text style={styles.since}>
-              {firstSession ? `${formatDate(firstSession.startedAt)} tarihinden beri` : 'İlk antrenmanını bekliyoruz'}
+              {firstSession ? `desde ${formatDate(firstSession.startedAt)}` : 'Aguardando seu primeiro treino'}
             </Text>
           </View>
           <TouchableOpacity
@@ -91,37 +91,37 @@ const ProfileScreen = ({ navigation }) => {
               setName(settings.name);
               setNameOpen(true);
             }}
-            accessibilityLabel="Adı düzenle"
+            accessibilityLabel="Editar nome"
           >
             <Pencil color={colors.textSecondary} size={16} />
           </TouchableOpacity>
         </Card>
 
         <Card style={styles.stats}>
-          <Stat label="Antrenman" value={`${sessions.length}`} accent />
-          <Stat label="Toplam süre" value={formatDuration(totalDuration(sessions))} />
-          <Stat label="Hafta serisi" value={`${weekStreak(sessions)}`} />
+          <Stat label="Treinos" value={`${sessions.length}`} accent />
+          <Stat label="Tempo total" value={formatDuration(totalDuration(sessions))} />
+          <Stat label="Sequência semanal" value={`${weekStreak(sessions)}`} />
         </Card>
 
-        <SectionHeader title="Günlük" />
+        <SectionHeader title="Diário" />
         <View style={styles.menu}>
           <MenuRow
             icon={Swords}
-            label="Meydan okumalar"
-            sub={`${challenges.length} meydan okuma`}
+            label="Desafios"
+            sub={`${challenges.length} desafio(s)`}
             onPress={() => navigation.navigate('Challenges')}
           />
-          <MenuRow icon={HeartPulse} label="Sağlık günlüğü" sub="Enerji, uyku, ruh hali, yorgunluk" onPress={() => navigation.navigate('Wellbeing')} />
-          <MenuRow icon={History} label="Antrenman geçmişi" onPress={() => navigation.navigate('History')} />
-          <MenuRow icon={DatabaseBackup} label="Yedekleme ve dışa aktarma" sub="Yedek al, paylaş, geri yükle" onPress={() => navigation.navigate('Backup')} />
+          <MenuRow icon={HeartPulse} label="Diário de saúde" sub="Energia, sono, humor, fadiga" onPress={() => navigation.navigate('Wellbeing')} />
+          <MenuRow icon={History} label="Histórico de treinos" onPress={() => navigation.navigate('History')} />
+          <MenuRow icon={DatabaseBackup} label="Backup e exportação" sub="Fazer backup, compartilhar, restaurar" onPress={() => navigation.navigate('Backup')} />
         </View>
 
-        <SectionHeader title="Ayarlar" />
+        <SectionHeader title="Configurações" />
         <Card style={styles.settings}>
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>Haftalık hedef</Text>
-              <Text style={styles.settingSub}>Bugün ekranındaki ilerleme çubuğu</Text>
+              <Text style={styles.settingLabel}>Meta semanal</Text>
+              <Text style={styles.settingSub}>Barra de progresso na tela Hoje</Text>
             </View>
             <Stepper
               value={settings.weeklyTarget}
@@ -133,8 +133,8 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.sep} />
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>Varsayılan dinlenme</Text>
-              <Text style={styles.settingSub}>Yeni eklenen egzersizler için</Text>
+              <Text style={styles.settingLabel}>Descanso padrão</Text>
+              <Text style={styles.settingSub}>Para novos exercícios adicionados</Text>
             </View>
             <Stepper
               label={formatSeconds(settings.restSeconds)}
@@ -146,8 +146,8 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.settingRow}>
             <Bell color={colors.primary} size={18} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>Bildirimler</Text>
-              <Text style={styles.settingSub}>Plan hatırlatıcıları ve dinlenme bitişi</Text>
+              <Text style={styles.settingLabel}>Notificações</Text>
+              <Text style={styles.settingSub}>Lembretes do plano e fim do descanso</Text>
             </View>
             <Switch
               value={settings.notificationsEnabled}
@@ -160,8 +160,8 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.settingRow}>
             <Vibrate color={colors.primary} size={18} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>Titreşim</Text>
-              <Text style={styles.settingSub}>Set işaretleme ve dinlenme sonu</Text>
+              <Text style={styles.settingLabel}>Vibração</Text>
+              <Text style={styles.settingSub}>Marcar série e fim do descanso</Text>
             </View>
             <Switch
               value={settings.hapticsEnabled}
@@ -176,8 +176,8 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.sep} />
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>Sağlık değerlendirmesi</Text>
-              <Text style={styles.settingSub}>Antrenman öncesi ve sonrası sor</Text>
+              <Text style={styles.settingLabel}>Avaliação de saúde</Text>
+              <Text style={styles.settingSub}>Perguntar antes e depois do treino</Text>
             </View>
             <Switch
               value={settings.askWellbeing}
@@ -188,28 +188,28 @@ const ProfileScreen = ({ navigation }) => {
           </View>
         </Card>
 
-        <SectionHeader title="Diğer" />
+        <SectionHeader title="Outros" />
         <View style={styles.menu}>
           {PRIVACY_POLICY_URL ? (
-            <MenuRow icon={ShieldCheck} label="Gizlilik politikası" onPress={() => Linking.openURL(PRIVACY_POLICY_URL)} />
+            <MenuRow icon={ShieldCheck} label="Política de privacidade" onPress={() => Linking.openURL(PRIVACY_POLICY_URL)} />
           ) : null}
           <MenuRow
             icon={Info}
-            label="Uygulama tanıtımını tekrar göster"
+            label="Mostrar introdução novamente"
             onPress={() => navigation.navigate('Welcome')}
           />
-          <MenuRow icon={Trash2} label="Tüm verileri sil" danger onPress={onReset} />
+          <MenuRow icon={Trash2} label="Excluir todos os dados" danger onPress={onReset} />
         </View>
-        <Text style={styles.version}>JojoMatch · v1.0.0 · Tüm veriler cihazında saklanır</Text>
+        <Text style={styles.version}>JojoMatch · v1.0.0 · Todos os dados ficam no seu dispositivo</Text>
       </ScrollView>
 
       <Sheet
         visible={nameOpen}
         onClose={() => setNameOpen(false)}
-        title="Adın"
+        title="Seu nome"
         footer={
           <Button
-            title="Kaydet"
+            title="Salvar"
             onPress={() => {
               updateSettings({ name: name.trim() });
               setNameOpen(false);
@@ -217,7 +217,7 @@ const ProfileScreen = ({ navigation }) => {
           />
         }
       >
-        <Field value={name} onChangeText={setName} placeholder="Adın" autoFocus autoCapitalize="words" />
+        <Field value={name} onChangeText={setName} placeholder="Seu nome" autoFocus autoCapitalize="words" />
       </Sheet>
     </Screen>
   );

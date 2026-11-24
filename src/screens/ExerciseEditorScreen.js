@@ -14,7 +14,7 @@ const ExerciseEditorScreen = ({ navigation, route }) => {
   const existing = exerciseId ? exercisesById[exerciseId] : null;
 
   const [name, setName] = useState(existing?.name || initialName || '');
-  const [category, setCategory] = useState(existing?.category || 'Diğer');
+  const [category, setCategory] = useState(existing?.category || 'Outros');
   const [type, setType] = useState(existing?.type || 'weight');
   const [notes, setNotes] = useState(existing?.notes || '');
 
@@ -30,10 +30,10 @@ const ExerciseEditorScreen = ({ navigation, route }) => {
   };
 
   const onDelete = () =>
-    Alert.alert('Egzersiz silinsin mi?', 'Kütüphaneden kaldırılır; geçmiş kayıtlar korunur.', [
-      { text: 'Vazgeç', style: 'cancel' },
+    Alert.alert('Excluir exercício?', 'Será removido da biblioteca; o histórico será mantido.', [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Sil',
+        text: 'Excluir',
         style: 'destructive',
         onPress: () => {
           archiveExercise(existing.id);
@@ -46,20 +46,20 @@ const ExerciseEditorScreen = ({ navigation, route }) => {
     <Screen edges={['top', 'bottom']}>
       <Header
         back
-        title={existing ? 'Egzersizi düzenle' : 'Yeni egzersiz'}
-        right={existing ? <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Sil" /> : null}
+        title={existing ? 'Editar exercício' : 'Novo exercício'}
+        right={existing ? <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Excluir" /> : null}
       />
       <KeyboardAwareScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <Field label="Ad" value={name} onChangeText={setName} placeholder="Örn. Bulgarian Split Squat" autoFocus={!existing} />
+        <Field label="Nome" value={name} onChangeText={setName} placeholder="Ex.: Agachamento Búlgaro" autoFocus={!existing} />
 
-        <Text style={styles.label}>Kategori</Text>
+        <Text style={styles.label}>Categoria</Text>
         <View style={styles.wrap}>
           {CATEGORIES.map((c) => (
             <Chip key={c} label={c} active={category === c} onPress={() => setCategory(c)} />
           ))}
         </View>
 
-        <Text style={styles.label}>Neyi kaydedeceksin?</Text>
+        <Text style={styles.label}>O que você vai registrar?</Text>
         <View style={styles.types}>
           {TYPE_KEYS.map((t) => (
             <Chip
@@ -72,20 +72,20 @@ const ExerciseEditorScreen = ({ navigation, route }) => {
           ))}
         </View>
         {existing && existing.type !== type ? (
-          <Text style={styles.warn}>Kayıt türünü değiştirmek eski kayıtların grafiklerde farklı görünmesine neden olabilir.</Text>
+          <Text style={styles.warn}>Alterar o tipo de registro pode fazer com que registros antigos apareçam diferentes nos gráficos.</Text>
         ) : null}
 
         <Field
-          label="Teknik notlar"
+          label="Notas técnicas"
           value={notes}
           onChangeText={setNotes}
-          placeholder="Duruş, nefes, ekipman ayarları..."
+          placeholder="Postura, respiração, ajustes de equipamento..."
           multiline
           style={{ marginTop: 16 }}
         />
       </KeyboardAwareScrollView>
       <View style={styles.footer}>
-        <Button title="Kaydet" onPress={save} disabled={!name.trim()} />
+        <Button title="Salvar" onPress={save} disabled={!name.trim()} />
       </View>
     </Screen>
   );

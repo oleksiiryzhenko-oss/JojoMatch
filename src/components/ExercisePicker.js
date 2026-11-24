@@ -10,12 +10,12 @@ import { useApp } from '../context/AppContext';
 import { Chip, Button } from './ui';
 
 // Full-screen exercise chooser with search, category filter and quick creation
-const ExercisePicker = ({ visible, onClose, onSelect, title = 'Egzersiz seç', excludeIds = [] }) => {
+const ExercisePicker = ({ visible, onClose, onSelect, title = 'Escolher exercício', excludeIds = [] }) => {
   const { activeExercises, addExercise } = useApp();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState(null);
   const [creating, setCreating] = useState(false);
-  const [newCategory, setNewCategory] = useState('Diğer');
+  const [newCategory, setNewCategory] = useState('Outros');
   const [newType, setNewType] = useState('weight');
 
   const list = useMemo(() => {
@@ -23,7 +23,7 @@ const ExercisePicker = ({ visible, onClose, onSelect, title = 'Egzersiz seç', e
     return activeExercises
       .filter((e) => !category || e.category === category)
       .filter((e) => !q || normalize(e.name).includes(q))
-      .sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
   }, [activeExercises, query, category]);
 
   const reset = () => {
@@ -55,7 +55,7 @@ const ExercisePicker = ({ visible, onClose, onSelect, title = 'Egzersiz seç', e
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
           <Text style={styles.title}>{title}</Text>
-          <TouchableOpacity style={styles.close} onPress={close} accessibilityLabel="Kapat">
+          <TouchableOpacity style={styles.close} onPress={close} accessibilityLabel="Fechar">
             <X color={colors.text} size={22} />
           </TouchableOpacity>
         </View>
@@ -65,7 +65,7 @@ const ExercisePicker = ({ visible, onClose, onSelect, title = 'Egzersiz seç', e
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Egzersiz ara veya yeni ad yaz"
+            placeholder="Buscar exercício ou digitar novo nome"
             placeholderTextColor={colors.textMuted}
             selectionColor={colors.primary}
             style={styles.searchInput}
@@ -73,7 +73,7 @@ const ExercisePicker = ({ visible, onClose, onSelect, title = 'Egzersiz seç', e
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} style={styles.chipsScroll}>
-          <Chip label="Tümü" active={!category} onPress={() => setCategory(null)} />
+          <Chip label="Todos" active={!category} onPress={() => setCategory(null)} />
           {CATEGORIES.map((c) => (
             <Chip key={c} label={c} active={category === c} onPress={() => setCategory(category === c ? null : c)} />
           ))}
@@ -81,22 +81,22 @@ const ExercisePicker = ({ visible, onClose, onSelect, title = 'Egzersiz seç', e
 
         {creating ? (
           <ScrollView contentContainerStyle={styles.createBox} keyboardShouldPersistTaps="handled">
-            <Text style={styles.createTitle}>“{query.trim() || '...'}” oluştur</Text>
-            <Text style={styles.createLabel}>Kategori</Text>
+            <Text style={styles.createTitle}>Criar “{query.trim() || '...'}”</Text>
+            <Text style={styles.createLabel}>Categoria</Text>
             <View style={styles.wrap}>
               {CATEGORIES.map((c) => (
                 <Chip key={c} label={c} active={newCategory === c} onPress={() => setNewCategory(c)} />
               ))}
             </View>
-            <Text style={styles.createLabel}>Kayıt türü</Text>
+            <Text style={styles.createLabel}>Tipo de registro</Text>
             <View style={styles.wrap}>
               {TYPE_KEYS.map((t) => (
                 <Chip key={t} label={EXERCISE_TYPES[t].label} active={newType === t} onPress={() => setNewType(t)} />
               ))}
             </View>
             <View style={styles.createActions}>
-              <Button title="Vazgeç" variant="secondary" onPress={() => setCreating(false)} style={{ flex: 1 }} />
-              <Button title="Oluştur ve ekle" onPress={create} disabled={!query.trim()} style={{ flex: 1.4 }} />
+              <Button title="Cancelar" variant="secondary" onPress={() => setCreating(false)} style={{ flex: 1 }} />
+              <Button title="Criar e adicionar" onPress={create} disabled={!query.trim()} style={{ flex: 1.4 }} />
             </View>
           </ScrollView>
         ) : (
@@ -111,11 +111,11 @@ const ExercisePicker = ({ visible, onClose, onSelect, title = 'Egzersiz seç', e
                   <Plus color={colors.onPrimary} size={18} strokeWidth={3} />
                 </View>
                 <Text style={styles.createRowText}>
-                  {query.trim() ? `“${query.trim()}” adında yeni egzersiz` : 'Yeni egzersiz oluştur'}
+                  {query.trim() ? `Novo exercício “${query.trim()}”` : 'Criar novo exercício'}
                 </Text>
               </TouchableOpacity>
             }
-            ListEmptyComponent={<Text style={styles.emptyText}>Sonuç bulunamadı.</Text>}
+            ListEmptyComponent={<Text style={styles.emptyText}>Nenhum resultado encontrado.</Text>}
             renderItem={({ item }) => {
               const added = excludeIds.includes(item.id);
               return (

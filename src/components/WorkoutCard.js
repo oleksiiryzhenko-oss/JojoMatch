@@ -39,13 +39,13 @@ const WorkoutCard = ({ template, done, onPress, onStart, onLongPress, right, sub
         </Text>
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         <Text style={styles.exercises} numberOfLines={1}>
-          {names || 'Henüz egzersiz yok'}
+          {names || 'Nenhum exercício ainda'}
           {template.exercises.length > 3 ? ` +${template.exercises.length - 3}` : ''}
         </Text>
         <View style={styles.meta}>
           <Layers color={colors.textMuted} size={13} />
           <Text style={styles.metaText}>
-            {template.exercises.length} egzersiz · {setsCount} set
+            {template.exercises.length} exercício(s) · {setsCount} série(s)
           </Text>
           <Clock color={colors.textMuted} size={13} style={{ marginLeft: 8 }} />
           <Text style={styles.metaText}>~{formatDuration(estimateTemplateSec(template))}</Text>
@@ -57,7 +57,7 @@ const WorkoutCard = ({ template, done, onPress, onStart, onLongPress, right, sub
             <Check color={colors.onPrimary} size={20} strokeWidth={3} />
           </View>
         ) : onStart ? (
-          <TouchableOpacity style={styles.play} onPress={onStart} hitSlop={8} accessibilityLabel="Başla">
+          <TouchableOpacity style={styles.play} onPress={onStart} hitSlop={8} accessibilityLabel="Iniciar">
             <Play color={colors.onPrimary} size={20} fill={colors.onPrimary} />
           </TouchableOpacity>
         ) : null)}

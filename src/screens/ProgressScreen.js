@@ -57,10 +57,10 @@ const ProgressScreen = ({ navigation }) => {
   return (
     <Screen>
       <Header
-        title="İlerleme"
+        title="Progresso"
         right={
           addAction ? (
-            <IconButton icon={Plus} bg={colors.primary} color={colors.onPrimary} onPress={addAction} label="Ekle" />
+            <IconButton icon={Plus} bg={colors.primary} color={colors.onPrimary} onPress={addAction} label="Adicionar" />
           ) : null
         }
       />
@@ -69,9 +69,9 @@ const ProgressScreen = ({ navigation }) => {
         value={tab}
         onChange={setTab}
         options={[
-          { value: 'summary', label: 'Özet' },
-          { value: 'goals', label: 'Hedefler' },
-          { value: 'body', label: 'Vücut' },
+          { value: 'summary', label: 'Resumo' },
+          { value: 'goals', label: 'Metas' },
+          { value: 'body', label: 'Corpo' },
         ]}
       />
       {tab === 'summary' ? <Summary navigation={navigation} /> : null}
@@ -137,33 +137,33 @@ const Summary = ({ navigation }) => {
         <View style={styles.tile}>
           <CalendarCheck color={colors.primary} size={18} />
           <Text style={styles.tileValue}>{monthSessions.length}</Text>
-          <Text style={styles.tileLabel}>Bu ay antrenman</Text>
+          <Text style={styles.tileLabel}>Treinos este mês</Text>
         </View>
         <View style={styles.tile}>
           <Clock color={colors.info} size={18} />
           <Text style={styles.tileValue}>{formatDuration(totalDuration(monthSessions))}</Text>
-          <Text style={styles.tileLabel}>Bu ay süre</Text>
+          <Text style={styles.tileLabel}>Tempo este mês</Text>
         </View>
         <View style={styles.tile}>
           <Dumbbell color={colors.warning} size={18} />
           <Text style={styles.tileValue}>{fmtBig(monthVolume)}</Text>
-          <Text style={styles.tileLabel}>Bu ay hacim (kg)</Text>
+          <Text style={styles.tileLabel}>Volume este mês (kg)</Text>
         </View>
         <View style={styles.tile}>
           <Flame color={colors.danger} size={18} />
-          <Text style={styles.tileValue}>{streak} hafta</Text>
-          <Text style={styles.tileLabel}>Seri</Text>
+          <Text style={styles.tileValue}>{streak} sem.</Text>
+          <Text style={styles.tileLabel}>Sequência</Text>
         </View>
       </View>
 
       <Card style={{ marginTop: 12 }}>
         <View style={styles.totalRow}>
-          <Stat label="Toplam antrenman" value={`${sessions.length}`} accent />
-          <Stat label="Toplam süre" value={formatDuration(totalDuration(sessions))} />
+          <Stat label="Total de treinos" value={`${sessions.length}`} accent />
+          <Stat label="Tempo total" value={formatDuration(totalDuration(sessions))} />
         </View>
       </Card>
 
-      <SectionHeader title="Takvim" action="Tüm geçmiş" onAction={() => navigation.navigate('History')} />
+      <SectionHeader title="Calendário" action="Todo histórico" onAction={() => navigation.navigate('History')} />
       <Card>
         <MonthCalendar month={month} onMonthChange={setMonth} marks={marks} selected={selected} onSelect={setSelected} />
       </Card>
@@ -190,12 +190,12 @@ const Summary = ({ navigation }) => {
         <View key={id} style={[styles.sessionRow, { opacity: 0.7 }]}>
           <View style={styles.plannedDot} />
           <Text style={[styles.sessionName, { flex: 1 }]}>{templatesById[id].name}</Text>
-          <Text style={styles.sessionMeta}>{selected < dayKey() ? 'Kaçırıldı' : 'Planlı'}</Text>
+          <Text style={styles.sessionMeta}>{selected < dayKey() ? 'Perdido' : 'Planejado'}</Text>
         </View>
       ))}
-      {!selectedSessions.length && !selectedPlanned.length ? <Text style={styles.muted}>Bu gün kayıt yok.</Text> : null}
+      {!selectedSessions.length && !selectedPlanned.length ? <Text style={styles.muted}>Nenhum registro neste dia.</Text> : null}
 
-      <SectionHeader title="Kişisel rekorlar" />
+      <SectionHeader title="Recordes pessoais" />
       {prList.length ? (
         prList.map(({ ex, metric, rec }) => (
           <TouchableOpacity
@@ -215,14 +215,14 @@ const Summary = ({ navigation }) => {
           </TouchableOpacity>
         ))
       ) : (
-        <Text style={styles.muted}>Antrenman kaydettikçe rekorların burada listelenecek.</Text>
+        <Text style={styles.muted}>Seus recordes serão listados aqui conforme você registra treinos.</Text>
       )}
 
       <TouchableOpacity style={styles.linkCard} onPress={() => navigation.navigate('Wellbeing')} activeOpacity={0.85}>
         <HeartPulse color={colors.primary} size={22} />
         <View style={{ flex: 1 }}>
-          <Text style={styles.sessionName}>Sağlık günlüğü</Text>
-          <Text style={styles.sessionMeta}>Enerji, uyku, ruh hali ve yorgunluk geçmişi</Text>
+          <Text style={styles.sessionName}>Diário de saúde</Text>
+          <Text style={styles.sessionMeta}>Histórico de energia, sono, humor e fadiga</Text>
         </View>
         <ChevronRight color={colors.textMuted} size={18} />
       </TouchableOpacity>
@@ -250,9 +250,9 @@ const Goals = ({ navigation }) => {
     return (
       <EmptyState
         icon={Target}
-        title="Henüz hedef yok"
-        text="Örneğin “Bu ay 12 antrenman” ya da “Squat’ta 100 kg” gibi bir hedef belirle ve ilerlemeni izle."
-        action="Hedef ekle"
+        title="Nenhuma meta ainda"
+        text="Por exemplo “12 treinos este mês” ou “Agachamento 100 kg”. Defina uma meta e acompanhe seu progresso."
+        action="Adicionar meta"
         onAction={() => navigation.navigate('GoalEditor')}
         style={{ marginTop: 40 }}
       />
@@ -290,17 +290,17 @@ const Goals = ({ navigation }) => {
                 {p.unit}
               </Text>
               {p.reached ? (
-                <Text style={[styles.goalDays, { color: colors.primary }]}>Hedefe ulaşıldı 🎉</Text>
+                <Text style={[styles.goalDays, { color: colors.primary }]}>Meta alcançada 🎉</Text>
               ) : p.daysLeft !== null ? (
                 <Text style={[styles.goalDays, p.daysLeft < 0 && { color: colors.danger }]}>
-                  {p.daysLeft < 0 ? 'Süre doldu' : `${p.daysLeft} gün kaldı`}
+                  {p.daysLeft < 0 ? 'Prazo expirado' : `${p.daysLeft} dias restantes`}
                 </Text>
               ) : null}
             </View>
             {g.type === 'custom' ? (
               <Button
                 small
-                title="İlerleme ekle"
+                title="Adicionar progresso"
                 icon={Plus}
                 variant="secondary"
                 onPress={() => setEntryGoal(g)}
@@ -310,7 +310,7 @@ const Goals = ({ navigation }) => {
             {p.reached && !g.completedAt ? (
               <Button
                 small
-                title="Tamamlandı olarak işaretle"
+                title="Marcar como concluída"
                 onPress={() => updateGoal(g.id, { completedAt: new Date().toISOString(), archived: true })}
                 style={{ marginTop: 12 }}
               />
@@ -320,7 +320,7 @@ const Goals = ({ navigation }) => {
       })}
       {goals.some((g) => g.archived) ? (
         <>
-          <SectionHeader title="Tamamlanan hedefler" />
+          <SectionHeader title="Metas concluídas" />
           {goals
             .filter((g) => g.archived)
             .map((g) => (
@@ -340,15 +340,15 @@ const Goals = ({ navigation }) => {
       <Sheet
         visible={!!entryGoal}
         onClose={() => setEntryGoal(null)}
-        title="İlerleme ekle"
-        footer={<Button title="Ekle" onPress={saveEntry} disabled={parseNum(entryValue) === null} />}
+        title="Adicionar progresso"
+        footer={<Button title="Adicionar" onPress={saveEntry} disabled={parseNum(entryValue) === null} />}
       >
         <Text style={styles.muted}>{entryGoal?.title}</Text>
         <Field
           value={entryValue}
           onChangeText={setEntryValue}
           keyboardType="decimal-pad"
-          placeholder="Değer"
+          placeholder="Valor"
           suffix={entryGoal?.unit}
           autoFocus
           style={{ marginTop: 12 }}
@@ -383,9 +383,9 @@ const Body = ({ navigation }) => {
     return (
       <EmptyState
         icon={Ruler}
-        title="Henüz ölçüm yok"
-        text="Kilonu ve seçtiğin vücut ölçülerini kaydet; değişimi grafikte takip et."
-        action="İlk ölçümü ekle"
+        title="Nenhuma medida ainda"
+        text="Registre seu peso e medidas corporais; acompanhe a evolução no gráfico."
+        action="Adicionar primeira medida"
         onAction={() => navigation.navigate('MeasurementEditor')}
         style={{ marginTop: 40 }}
       />
@@ -395,7 +395,7 @@ const Body = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <Card>
-        <Text style={styles.cardLabel}>Son ölçüm · {formatDate(latest.date)}</Text>
+        <Text style={styles.cardLabel}>Última medida · {formatDate(latest.date)}</Text>
         <View style={styles.measureGrid}>
           {fields.map((f) => {
             const v = latest.values?.[f.key];
@@ -418,16 +418,16 @@ const Body = ({ navigation }) => {
         </View>
       </Card>
 
-      <SectionHeader title={`${meta.label} grafiği`} />
+      <SectionHeader title={`${meta.label} — gráfico`} />
       <Card>
         {points.length ? (
           <LineChart points={points} format={(v) => `${fmtNum(v)} ${meta.unit}`} color={colors.primary} />
         ) : (
-          <Text style={styles.muted}>Bu ölçü için henüz veri yok.</Text>
+          <Text style={styles.muted}>Sem dados para esta medida ainda.</Text>
         )}
       </Card>
 
-      <SectionHeader title="Ölçüm geçmişi" />
+      <SectionHeader title="Histórico de medidas" />
       {sorted.map((m) => (
         <TouchableOpacity
           key={m.id}

@@ -13,18 +13,18 @@ import { Button, Field, Chip } from '../components/ui';
 const slides = [
   {
     icon: Dumbbell,
-    title: 'Antrenmanını\nSen Kur',
-    description: 'Egzersizleri, set, tekrar, ağırlık, süre ve mesafeyi belirle. Şablon olarak kaydet, istediğin zaman kopyala.',
+    title: 'Monte Seu\nTreino',
+    description: 'Defina exercícios, séries, repetições, peso, tempo e distância. Salve como modelo, duplique quando quiser.',
   },
   {
     icon: ClipboardCheck,
-    title: 'Her Seti\nKaydet',
-    description: 'Antrenman sırasında setleri işaretle, gerçek sonuçlarını gir, dinlenme sayacını başlat ve notlar al.',
+    title: 'Registre Cada\nSérie',
+    description: 'Marque as séries durante o treino, insira seus resultados reais, inicie o cronômetro de descanso e faça anotações.',
   },
   {
     icon: TrendingUp,
-    title: 'Gelişimini\nKarşılaştır',
-    description: 'Kendini nasıl hissettiğini değerlendir, sonuçlarını önceki antrenmanla kıyasla ve rekorlarını takip et.',
+    title: 'Compare Sua\nEvolução',
+    description: 'Avalie como se sentiu, compare seus resultados com o treino anterior e acompanhe seus recordes.',
   },
 ];
 
@@ -45,19 +45,19 @@ const WelcomeScreen = ({ navigation }) => {
     return (
       <SafeAreaView style={styles.safe}>
         <KeyboardAwareScrollView contentContainerStyle={styles.setup} keyboardShouldPersistTaps="handled" bottomOffset={24}>
-          <Text style={styles.pickerTitle}>Hadi tanışalım</Text>
-          <Text style={styles.pickerSub}>Bu bilgiler sadece cihazında saklanır. Daha sonra Profil’den değiştirebilirsin.</Text>
+          <Text style={styles.pickerTitle}>Vamos nos conhecer</Text>
+          <Text style={styles.pickerSub}>Essas informações ficam apenas no seu dispositivo. Você pode alterá-las depois no Perfil.</Text>
 
           <Field
-            label="Adın"
+            label="Seu nome"
             value={name}
             onChangeText={setName}
-            placeholder="Örn. Elif"
+            placeholder="Ex.: João"
             autoCapitalize="words"
             style={{ marginTop: 28 }}
           />
 
-          <Text style={styles.label}>Haftada kaç antrenman hedefliyorsun?</Text>
+          <Text style={styles.label}>Quantos treinos por semana você pretende fazer?</Text>
           <View style={styles.chips}>
             {[1, 2, 3, 4, 5, 6, 7].map((n) => (
               <Chip key={n} label={`${n}`} active={weeklyTarget === n} onPress={() => setWeeklyTarget(n)} style={styles.numChip} />
@@ -65,7 +65,7 @@ const WelcomeScreen = ({ navigation }) => {
           </View>
         </KeyboardAwareScrollView>
         <View style={styles.bottom}>
-          <Button title="Başlayalım" onPress={finish} icon={ChevronRight} />
+          <Button title="Vamos começar" onPress={finish} icon={ChevronRight} />
         </View>
       </SafeAreaView>
     );
@@ -83,7 +83,7 @@ const WelcomeScreen = ({ navigation }) => {
           ))}
         </View>
         <TouchableOpacity onPress={() => setStep(slides.length)} hitSlop={10}>
-          <Text style={styles.skip}>Geç</Text>
+          <Text style={styles.skip}>Pular</Text>
         </TouchableOpacity>
       </View>
 
@@ -101,7 +101,7 @@ const WelcomeScreen = ({ navigation }) => {
 
       <View style={styles.bottom}>
         <TouchableOpacity style={styles.nextBtn} activeOpacity={0.9} onPress={() => setStep((s) => s + 1)}>
-          <Text style={styles.nextText}>{step === slides.length - 1 ? 'Devam' : 'İleri'}</Text>
+          <Text style={styles.nextText}>{step === slides.length - 1 ? 'Continuar' : 'Avançar'}</Text>
           <ChevronRight color={colors.onPrimary} size={22} />
         </TouchableOpacity>
       </View>

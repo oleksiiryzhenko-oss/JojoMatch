@@ -10,15 +10,15 @@ const useEnableNotifications = () => {
     const status = await enableNotifications();
     if (status === 'blocked') {
       Alert.alert(
-        'Bildirimler kapalı',
-        'Hatırlatıcıları alabilmek için telefon ayarlarından JojoMatch bildirimlerine izin ver.',
+        'Notificações desativadas',
+        'Para receber lembretes, permita as notificações do JojoMatch nas configurações do telefone.',
         [
-          { text: 'Vazgeç', style: 'cancel' },
-          { text: 'Ayarları aç', onPress: () => Linking.openSettings() },
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Abrir configurações', onPress: () => Linking.openSettings() },
         ]
       );
     } else if (status === 'denied') {
-      Alert.alert('İzin verilmedi', 'Hatırlatıcı saatleri kaydedildi ama bildirim gönderilemeyecek.');
+      Alert.alert('Permissão negada', 'Os horários dos lembretes foram salvos, mas as notificações não poderão ser enviadas.');
     }
     return status === 'granted';
   };

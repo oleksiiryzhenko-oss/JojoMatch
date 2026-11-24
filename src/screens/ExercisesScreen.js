@@ -31,21 +31,21 @@ const ExercisesScreen = ({ navigation }) => {
       .filter((e) => !category || e.category === category)
       .filter((e) => !onlyMine || !e.builtIn)
       .filter((e) => !q || normalize(e.name).includes(q))
-      .sort((a, b) => (usage[b.id] || 0) - (usage[a.id] || 0) || a.name.localeCompare(b.name, 'tr'));
+      .sort((a, b) => (usage[b.id] || 0) - (usage[a.id] || 0) || a.name.localeCompare(b.name, 'pt-BR'));
   }, [activeExercises, query, category, onlyMine, usage]);
 
   return (
     <Screen>
       <Header
-        title="Egzersizler"
-        subtitle={`${activeExercises.length} egzersiz`}
+        title="Exercícios"
+        subtitle={`${activeExercises.length} exercícios`}
         right={
           <IconButton
             icon={Plus}
             bg={colors.primary}
             color={colors.onPrimary}
             onPress={() => navigation.navigate('ExerciseEditor')}
-            label="Yeni egzersiz"
+            label="Novo exercício"
           />
         }
       />
@@ -54,15 +54,15 @@ const ExercisesScreen = ({ navigation }) => {
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Egzersiz ara"
+          placeholder="Buscar exercício"
           placeholderTextColor={colors.textMuted}
           selectionColor={colors.primary}
           style={styles.searchInput}
         />
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll} contentContainerStyle={styles.chips}>
-        <Chip label="Tümü" active={!category && !onlyMine} onPress={() => { setCategory(null); setOnlyMine(false); }} />
-        <Chip label="Benim" active={onlyMine} onPress={() => setOnlyMine((v) => !v)} />
+        <Chip label="Todos" active={!category && !onlyMine} onPress={() => { setCategory(null); setOnlyMine(false); }} />
+        <Chip label="Meus" active={onlyMine} onPress={() => setOnlyMine((v) => !v)} />
         {CATEGORIES.map((c) => (
           <Chip key={c} label={c} active={category === c} onPress={() => setCategory(category === c ? null : c)} />
         ))}
@@ -74,9 +74,9 @@ const ExercisesScreen = ({ navigation }) => {
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={
           <EmptyState
-            title="Egzersiz bulunamadı"
-            text="Aradığın egzersizi kendin oluşturabilirsin."
-            action="Yeni egzersiz"
+            title="Exercício não encontrado"
+            text="Você pode criar o exercício que procura."
+            action="Novo exercício"
             onAction={() => navigation.navigate('ExerciseEditor', { name: query.trim() })}
           />
         }
@@ -93,7 +93,7 @@ const ExercisesScreen = ({ navigation }) => {
               <Text style={styles.name}>{item.name}</Text>
               <Text style={styles.meta}>
                 {item.category} · {EXERCISE_TYPES[item.type]?.label}
-                {!item.builtIn ? ' · Kişisel' : ''}
+                {!item.builtIn ? ' · Pessoal' : ''}
               </Text>
             </View>
             {usage[item.id] ? (

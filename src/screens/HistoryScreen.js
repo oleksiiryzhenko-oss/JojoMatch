@@ -24,18 +24,18 @@ const HistoryScreen = ({ navigation }) => {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <Header back title="Geçmiş" subtitle={`${sessions.length} antrenman · ${formatDuration(totalDuration(sessions))}`} />
+      <Header back title="Histórico" subtitle={`${sessions.length} treinos · ${formatDuration(totalDuration(sessions))}`} />
       <SectionList
         sections={sections}
         keyExtractor={(s) => s.id}
         contentContainerStyle={styles.list}
         stickySectionHeadersEnabled={false}
-        ListEmptyComponent={<EmptyState icon={History} title="Henüz kayıt yok" text="Tamamladığın antrenmanlar burada listelenir." />}
+        ListEmptyComponent={<EmptyState icon={History} title="Nenhum registro ainda" text="Seus treinos concluídos serão listados aqui." />}
         renderSectionHeader={({ section }) => (
           <View style={styles.sectionHead}>
             <Text style={styles.sectionTitle}>{section.title}</Text>
             <Text style={styles.sectionMeta}>
-              {section.data.length} antrenman · {formatDuration(totalDuration(section.data))}
+              {section.data.length} treinos · {formatDuration(totalDuration(section.data))}
             </Text>
           </View>
         )}
@@ -54,7 +54,7 @@ const HistoryScreen = ({ navigation }) => {
                   {formatShortDate(item.startedAt)} · {formatTime(item.startedAt)} · {formatDuration(item.durationSec)}
                 </Text>
                 <Text style={styles.meta}>
-                  {sum.exercises} egzersiz · {sum.sets} set{sum.volume ? ` · ${fmtBig(sum.volume)} kg` : ''}
+                  {sum.exercises} exercícios · {sum.sets} séries{sum.volume ? ` · ${fmtBig(sum.volume)} kg` : ''}
                   {item.wellbeingAfter?.load ? ` · RPE ${item.wellbeingAfter.load}` : ''}
                 </Text>
               </View>

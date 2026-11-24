@@ -85,8 +85,8 @@ const SessionScreen = ({ navigation }) => {
   if (!session) {
     return (
       <Screen edges={['top', 'bottom']}>
-        <Header back title="Antrenman" />
-        <EmptyState title="Aktif antrenman yok" action="Geri dön" onAction={() => navigation.goBack()} />
+        <Header back title="Treino" />
+        <EmptyState title="Nenhum treino ativo" action="Voltar" onAction={() => navigation.goBack()} />
       </Screen>
     );
   }
@@ -142,9 +142,9 @@ const SessionScreen = ({ navigation }) => {
   const removeSet = (item, setId) => updateItem(item.id, { sets: item.sets.filter((s) => s.id !== setId) });
 
   const removeItem = (item) =>
-    Alert.alert('Egzersiz kaldırılsın mı?', exercisesById[item.exerciseId]?.name, [
-      { text: 'Vazgeç', style: 'cancel' },
-      { text: 'Kaldır', style: 'destructive', onPress: () => setItems((list) => list.filter((it) => it.id !== item.id)) },
+    Alert.alert('Remover exercício?', exercisesById[item.exerciseId]?.name, [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Remover', style: 'destructive', onPress: () => setItems((list) => list.filter((it) => it.id !== item.id)) },
     ]);
 
   const onPick = (exercise) => {
@@ -172,20 +172,20 @@ const SessionScreen = ({ navigation }) => {
   const onFinish = () => {
     if (!summary.sets) {
       hapticWarning();
-      Alert.alert('Hiç set tamamlanmadı', 'Kaydetmek için en az bir seti işaretle ya da antrenmanı sil.', [
-        { text: 'Devam et', style: 'cancel' },
-        { text: 'Antrenmanı sil', style: 'destructive', onPress: onDiscardConfirmed },
+      Alert.alert('Nenhuma série concluída', 'Marque pelo menos uma série para salvar ou exclua o treino.', [
+        { text: 'Continuar', style: 'cancel' },
+        { text: 'Excluir treino', style: 'destructive', onPress: onDiscardConfirmed },
       ]);
       return;
     }
     const proceed = () => (settings.askWellbeing ? setAfterOpen(true) : complete({}));
     if (summary.sets < summary.totalSets) {
       Alert.alert(
-        'Antrenman bitirilsin mi?',
-        `${summary.totalSets - summary.sets} set tamamlanmadı. İşaretlenmeyen setler kaydedilmeyecek.`,
+        'Finalizar treino?',
+        `${summary.totalSets - summary.sets} séries não concluídas. Séries não marcadas não serão salvas.`,
         [
-          { text: 'Devam et', style: 'cancel' },
-          { text: 'Bitir', onPress: proceed },
+          { text: 'Continuar', style: 'cancel' },
+          { text: 'Finalizar', onPress: proceed },
         ]
       );
     } else proceed();
@@ -204,9 +204,9 @@ const SessionScreen = ({ navigation }) => {
   };
 
   const onDiscard = () =>
-    Alert.alert('Antrenman silinsin mi?', 'Bu antrenmanda girilen tüm veriler silinecek.', [
-      { text: 'Vazgeç', style: 'cancel' },
-      { text: 'Sil', style: 'destructive', onPress: onDiscardConfirmed },
+    Alert.alert('Excluir treino?', 'Todos os dados inseridos neste treino serão excluídos.', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Excluir', style: 'destructive', onPress: onDiscardConfirmed },
     ]);
 
   const saveBefore = (skip) => {
@@ -219,8 +219,8 @@ const SessionScreen = ({ navigation }) => {
       <Header
         back
         title={session.name}
-        subtitle={`${summary.sets}/${summary.totalSets} set tamamlandı`}
-        right={<IconButton icon={Trash2} color={colors.danger} onPress={onDiscard} label="Antrenmanı sil" />}
+        subtitle={`${summary.sets}/${summary.totalSets} séries concluídas`}
+        right={<IconButton icon={Trash2} color={colors.danger} onPress={onDiscard} label="Excluir treino" />}
       />
 
       <View style={styles.topBar}>
@@ -229,7 +229,7 @@ const SessionScreen = ({ navigation }) => {
           <Text style={styles.clock}>{formatClock(elapsed)}</Text>
         </View>
         <ProgressBar progress={summary.totalSets ? summary.sets / summary.totalSets : 0} style={{ flex: 1 }} />
-        <Button title="Bitir" icon={Flag} small onPress={onFinish} />
+        <Button title="Finalizar" icon={Flag} small onPress={onFinish} />
       </View>
 
       <KeyboardAwareScrollView
@@ -247,10 +247,10 @@ const SessionScreen = ({ navigation }) => {
             <View key={item.id} style={[styles.block, allDone && styles.blockDone]}>
               <View style={styles.blockHead}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.exName}>{ex?.name || 'Silinmiş egzersiz'}</Text>
+                  <Text style={styles.exName}>{ex?.name || 'Exercício excluído'}</Text>
                   {item.replacedFrom ? (
                     <Text style={styles.replaced}>
-                      “{exercisesById[item.replacedFrom]?.name}” yerine
+                      no lugar de “{exercisesById[item.replacedFrom]?.name}”
                     </Text>
                   ) : null}
                 </View>
@@ -273,7 +273,7 @@ const SessionScreen = ({ navigation }) => {
                 <View style={{ flex: 1, flexDirection: 'row', gap: 8 }}>
                   {typeFields(type).map((f) => (
                     <Text key={f} style={[styles.setHeaderText, { flex: 1, textAlign: 'center' }]}>
-                      {f === 'weight' ? 'Ağırlık' : f === 'reps' ? 'Tekrar' : f === 'time' ? 'Süre' : 'Mesafe'}
+                      {f === 'weight' ? 'Peso' : f === 'reps' ? 'Rep' : f === 'time' ? 'Tempo' : 'Distância'}
                     </Text>
                   ))}
                 </View>
@@ -285,8 +285,8 @@ const SessionScreen = ({ navigation }) => {
                   <TouchableOpacity
                     onLongPress={() =>
                       Alert.alert(`Set ${i + 1}`, undefined, [
-                        { text: 'Seti sil', style: 'destructive', onPress: () => removeSet(item, s.id) },
-                        { text: 'Vazgeç', style: 'cancel' },
+                        { text: 'Excluir série', style: 'destructive', onPress: () => removeSet(item, s.id) },
+                        { text: 'Cancelar', style: 'cancel' },
                       ])
                     }
                     style={styles.setNumWrap}
@@ -303,7 +303,7 @@ const SessionScreen = ({ navigation }) => {
                   <TouchableOpacity
                     style={[styles.check, s.done && styles.checkOn]}
                     onPress={() => toggleSet(item, s)}
-                    accessibilityLabel={`Set ${i + 1} tamamlandı`}
+                    accessibilityLabel={`Série ${i + 1} concluída`}
                   >
                     <Check color={s.done ? colors.onPrimary : colors.textMuted} size={22} strokeWidth={3} />
                   </TouchableOpacity>
@@ -314,7 +314,7 @@ const SessionScreen = ({ navigation }) => {
                 <TextInput
                   value={item.note}
                   onChangeText={(t) => updateItem(item.id, { note: t })}
-                  placeholder="Bu egzersiz için not..."
+                  placeholder="Nota para este exercício..."
                   placeholderTextColor={colors.textMuted}
                   selectionColor={colors.primary}
                   multiline
@@ -333,11 +333,11 @@ const SessionScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.action} onPress={() => setNoteOpen((n) => ({ ...n, [item.id]: true }))}>
                   <StickyNote color={colors.textSecondary} size={15} />
-                  <Text style={styles.actionText}>Not</Text>
+                  <Text style={styles.actionText}>Nota</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.action} onPress={() => setPicker({ mode: 'replace', itemId: item.id })}>
                   <RefreshCw color={colors.textSecondary} size={15} />
-                  <Text style={styles.actionText}>Değiştir</Text>
+                  <Text style={styles.actionText}>Substituir</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.action} onPress={() => removeItem(item)}>
                   <Trash2 color={colors.danger} size={15} />
@@ -347,27 +347,27 @@ const SessionScreen = ({ navigation }) => {
           );
         })}
 
-        <Button title="Egzersiz ekle" icon={Plus} variant="outline" onPress={() => setPicker({ mode: 'add' })} />
+        <Button title="Adicionar exercício" icon={Plus} variant="outline" onPress={() => setPicker({ mode: 'add' })} />
 
-        <Text style={styles.noteLabel}>Antrenman notu</Text>
+        <Text style={styles.noteLabel}>Nota do treino</Text>
         <TextInput
           value={session.note}
           onChangeText={(t) => updateActiveSession({ note: t })}
-          placeholder="Genel notlar, ekipman, ortam..."
+          placeholder="Notas gerais, equipamento, ambiente..."
           placeholderTextColor={colors.textMuted}
           selectionColor={colors.primary}
           multiline
           style={[styles.note, { minHeight: 80 }]}
         />
 
-        <Button title="Antrenmanı bitir" icon={Flag} onPress={onFinish} style={{ marginTop: 20 }} />
+        <Button title="Finalizar treino" icon={Flag} onPress={onFinish} style={{ marginTop: 20 }} />
       </KeyboardAwareScrollView>
 
       {/* REST TIMER */}
       {session.restEndsAt && restLeft > 0 ? (
         <View style={[styles.rest, { bottom: Math.max(insets.bottom, 12) }]}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.restLabel}>DİNLENME</Text>
+            <Text style={styles.restLabel}>DESCANSO</Text>
             <Text style={styles.restClock}>{formatSeconds(restLeft)}</Text>
             <ProgressBar
               progress={restLeft / (session.restTotal || restLeft)}
@@ -402,7 +402,7 @@ const SessionScreen = ({ navigation }) => {
           <TouchableOpacity
             style={[styles.restBtn, styles.restSkip]}
             onPress={() => updateActiveSession({ restEndsAt: null, restTotal: null })}
-            accessibilityLabel="Dinlenmeyi geç"
+            accessibilityLabel="Pular descanso"
           >
             <SkipForward color={colors.primary} size={20} />
           </TouchableOpacity>
@@ -411,7 +411,7 @@ const SessionScreen = ({ navigation }) => {
 
       <ExercisePicker
         visible={!!picker}
-        title={picker?.mode === 'replace' ? 'Egzersizi değiştir' : 'Egzersiz ekle'}
+        title={picker?.mode === 'replace' ? 'Substituir exercício' : 'Adicionar exercício'}
         onClose={() => setPicker(null)}
         onSelect={onPick}
         excludeIds={session.exercises.map((it) => it.exerciseId)}
@@ -421,38 +421,38 @@ const SessionScreen = ({ navigation }) => {
       <Sheet
         visible={beforeOpen}
         onClose={() => saveBefore(true)}
-        title="Başlamadan önce"
+        title="Antes de começar"
         footer={
           <View style={styles.sheetFooter}>
-            <Button title="Atla" variant="secondary" onPress={() => saveBefore(true)} style={{ flex: 1 }} />
-            <Button title="Kaydet" onPress={() => saveBefore(false)} style={{ flex: 1.5 }} />
+            <Button title="Pular" variant="secondary" onPress={() => saveBefore(true)} style={{ flex: 1 }} />
+            <Button title="Salvar" onPress={() => saveBefore(false)} style={{ flex: 1.5 }} />
           </View>
         }
       >
-        <Text style={styles.sheetIntro}>Bugün kendini nasıl hissediyorsun? Sonra performansınla karşılaştırabilirsin.</Text>
+        <Text style={styles.sheetIntro}>Como você está se sentindo hoje? Depois pode comparar com seu desempenho.</Text>
         <RatingSelector
-          label="Enerji"
+          label="Energia"
           icon={Zap}
           value={before.energy}
           onChange={(v) => setBefore((b) => ({ ...b, energy: v }))}
-          lowLabel="Bitkin"
-          highLabel="Enerjik"
+          lowLabel="Exausto"
+          highLabel="Energizado"
         />
         <RatingSelector
-          label="Uyku"
+          label="Sono"
           icon={Moon}
           value={before.sleep}
           onChange={(v) => setBefore((b) => ({ ...b, sleep: v }))}
-          lowLabel="Çok kötü"
-          highLabel="Mükemmel"
+          lowLabel="Muito ruim"
+          highLabel="Excelente"
         />
         <RatingSelector
-          label="Ruh hali"
+          label="Humor"
           icon={Smile}
           value={before.mood}
           onChange={(v) => setBefore((b) => ({ ...b, mood: v }))}
-          lowLabel="Kötü"
-          highLabel="Harika"
+          lowLabel="Ruim"
+          highLabel="Ótimo"
         />
       </Sheet>
 
@@ -460,36 +460,36 @@ const SessionScreen = ({ navigation }) => {
       <Sheet
         visible={afterOpen}
         onClose={() => setAfterOpen(false)}
-        title="Antrenman nasıl geçti?"
+        title="Como foi o treino?"
         footer={
           <View style={styles.sheetFooter}>
-            <Button title="Atla" variant="secondary" onPress={() => complete({ skipped: true })} style={{ flex: 1 }} />
-            <Button title="Kaydet ve bitir" onPress={() => complete(after)} style={{ flex: 1.6 }} />
+            <Button title="Pular" variant="secondary" onPress={() => complete({ skipped: true })} style={{ flex: 1 }} />
+            <Button title="Salvar e finalizar" onPress={() => complete(after)} style={{ flex: 1.6 }} />
           </View>
         }
       >
         <RatingSelector
-          label="Yüklenme (RPE)"
+          label="Esforço (RPE)"
           icon={Flame}
           max={10}
           value={after.load}
           onChange={(v) => setAfter((a) => ({ ...a, load: v }))}
-          lowLabel="Çok hafif"
-          highLabel="Maksimum"
+          lowLabel="Muito leve"
+          highLabel="Máximo"
         />
         <RatingSelector
-          label="Yorgunluk"
+          label="Fadiga"
           icon={Battery}
           value={after.fatigue}
           onChange={(v) => setAfter((a) => ({ ...a, fatigue: v }))}
-          lowLabel="Dinç"
-          highLabel="Çok yorgun"
+          lowLabel="Descansado"
+          highLabel="Muito cansado"
         />
-        <Text style={styles.noteLabel}>Yorum</Text>
+        <Text style={styles.noteLabel}>Comentário</Text>
         <TextInput
           value={after.comment}
           onChangeText={(t) => setAfter((a) => ({ ...a, comment: t }))}
-          placeholder="Ağrı, motivasyon, bir dahaki sefere..."
+          placeholder="Dor, motivação, próxima vez..."
           placeholderTextColor={colors.textMuted}
           selectionColor={colors.primary}
           multiline

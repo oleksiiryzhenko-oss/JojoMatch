@@ -28,13 +28,13 @@ const ensureChannels = () => {
   if (!channelsReady) {
     channelsReady = Promise.all([
       Notifications.setNotificationChannelAsync(REMINDER_CHANNEL, {
-        name: 'Antrenman hatırlatıcıları',
+        name: 'Lembretes de treino',
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 200, 250],
         lightColor: colors.primary,
       }),
       Notifications.setNotificationChannelAsync(REST_CHANNEL, {
-        name: 'Dinlenme sayacı',
+        name: 'Cronômetro de descanso',
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 400, 150, 400],
         lightColor: colors.primary,
@@ -93,10 +93,10 @@ export const syncWeeklyReminders = async ({ enabled, weekPlan, templatesById }) 
       const names = (day.templateIds || []).map((id) => templatesById[id]?.name).filter(Boolean);
       return Notifications.scheduleNotificationAsync({
         content: {
-          title: 'Antrenman zamanı 💪',
+          title: 'Hora do treino 💪',
           body: names.length
-            ? `${WEEKDAYS_LONG[dow]} planın: ${names.join(', ')}`
-            : 'Bugünkü antrenmanını unutma. Planına göz at!',
+            ? `${WEEKDAYS_LONG[dow]} — seu plano: ${names.join(', ')}`
+            : 'Não esqueça seu treino de hoje. Confira seu plano!',
           data: { kind: KIND_REMINDER, weekday: Number(dow) },
         },
         trigger: {
@@ -124,8 +124,8 @@ export const scheduleRestEnd = async (endsAtIso, exerciseName) => {
     await ensureChannels();
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'Dinlenme bitti ⏱️',
-        body: exerciseName ? `Sıradaki set: ${exerciseName}` : 'Sıradaki sete geç!',
+        title: 'Descanso acabou ⏱️',
+        body: exerciseName ? `Próxima série: ${exerciseName}` : 'Passe para a próxima série!',
         data: { kind: KIND_REST },
       },
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date, channelId: REST_CHANNEL },

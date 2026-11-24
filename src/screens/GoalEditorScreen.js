@@ -11,7 +11,7 @@ import { Screen, Header, Field, Chip, Button, IconButton, ProgressBar, Card } fr
 import DateField from '../components/DateField';
 import ExercisePicker from '../components/ExercisePicker';
 
-const UNIT_FOR = { workouts: 'antrenman', minutes: 'dk', bodyweight: 'kg' };
+const UNIT_FOR = { workouts: 'treinos', minutes: 'min', bodyweight: 'kg' };
 
 const GoalEditorScreen = ({ navigation, route }) => {
   const { goalId } = route.params || {};
@@ -38,15 +38,15 @@ const GoalEditorScreen = ({ navigation, route }) => {
     const t = parseNum(target);
     switch (type) {
       case 'workouts':
-        return t ? `${t} antrenman tamamla` : 'Antrenman hedefi';
+        return t ? `${t} treinos concluídos` : 'Meta de treinos';
       case 'minutes':
-        return t ? `${t} dakika antrenman` : 'Süre hedefi';
+        return t ? `${t} minutos de treino` : 'Meta de tempo';
       case 'exercise':
-        return exercise ? `${exercise.name}: ${t ? metric.format(t) : 'yeni rekor'}` : 'Egzersiz hedefi';
+        return exercise ? `${exercise.name}: ${t ? metric.format(t) : 'novo recorde'}` : 'Meta de exercício';
       case 'bodyweight':
-        return t ? `${fmtNum(t)} kg’a ulaş` : 'Kilo hedefi';
+        return t ? `Alcançar ${fmtNum(t)} kg` : 'Meta de peso';
       default:
-        return 'Kişisel hedef';
+        return 'Meta personalizada';
     }
   };
 
@@ -73,10 +73,10 @@ const GoalEditorScreen = ({ navigation, route }) => {
   };
 
   const onDelete = () =>
-    Alert.alert('Hedef silinsin mi?', undefined, [
-      { text: 'Vazgeç', style: 'cancel' },
+    Alert.alert('Excluir meta?', undefined, [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Sil',
+        text: 'Excluir',
         style: 'destructive',
         onPress: () => {
           deleteGoal(existing.id);
@@ -91,8 +91,8 @@ const GoalEditorScreen = ({ navigation, route }) => {
     <Screen edges={['top', 'bottom']}>
       <Header
         back
-        title={existing ? 'Hedefi düzenle' : 'Yeni hedef'}
-        right={existing ? <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Sil" /> : null}
+        title={existing ? 'Editar meta' : 'Nova meta'}
+        right={existing ? <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Excluir" /> : null}
       />
       <KeyboardAwareScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" bottomOffset={24}>
         {progress ? (
@@ -105,7 +105,7 @@ const GoalEditorScreen = ({ navigation, route }) => {
           </Card>
         ) : null}
 
-        <Text style={styles.label}>Hedef türü</Text>
+        <Text style={styles.label}>Tipo de meta</Text>
         <View style={styles.wrap}>
           {Object.values(GOAL_TYPES).map((g) => (
             <Chip key={g.key} label={g.label} active={type === g.key} onPress={() => setType(g.key)} />
@@ -115,17 +115,17 @@ const GoalEditorScreen = ({ navigation, route }) => {
 
         {type === 'exercise' ? (
           <>
-            <Text style={styles.label}>Egzersiz</Text>
+            <Text style={styles.label}>Exercício</Text>
             <TouchableOpacity style={styles.exBox} onPress={() => setPickerOpen(true)}>
               <Dumbbell color={exercise ? colors.primary : colors.textMuted} size={18} />
               <Text style={[styles.exText, !exercise && { color: colors.textMuted }]}>
-                {exercise?.name || 'Egzersiz seç'}
+                {exercise?.name || 'Escolher exercício'}
               </Text>
               <ChevronRight color={colors.textMuted} size={18} />
             </TouchableOpacity>
             {exercise ? (
               <Text style={styles.hint}>
-                Mevcut rekorun: {currentRecord ? metric.format(currentRecord) : 'henüz yok'} ({metric.label.toLocaleLowerCase('tr-TR')})
+                Seu recorde atual: {currentRecord ? metric.format(currentRecord) : 'ainda não há'} ({metric.label.toLocaleLowerCase('pt-BR')})
               </Text>
             ) : null}
           </>
@@ -133,7 +133,7 @@ const GoalEditorScreen = ({ navigation, route }) => {
 
         <View style={styles.row}>
           <Field
-            label="Hedef değer"
+            label="Valor-alvo"
             value={target}
             onChangeText={setTarget}
             keyboardType="decimal-pad"
@@ -143,9 +143,9 @@ const GoalEditorScreen = ({ navigation, route }) => {
                 ? undefined
                 : type === 'exercise'
                   ? exercise?.type === 'time'
-                    ? 'sn'
+                    ? 's'
                     : exercise?.type === 'reps'
-                      ? 'tkr'
+                      ? 'rep'
                       : exercise?.type === 'distance'
                         ? 'km'
                         : 'kg'
@@ -154,26 +154,26 @@ const GoalEditorScreen = ({ navigation, route }) => {
             style={{ flex: 1 }}
           />
           {type === 'custom' ? (
-            <Field label="Birim" value={unit} onChangeText={setUnit} placeholder="km, gün, sayfa..." style={{ flex: 1 }} />
+            <Field label="Unidade" value={unit} onChangeText={setUnit} placeholder="km, dias, páginas..." style={{ flex: 1 }} />
           ) : null}
         </View>
 
         {type === 'bodyweight' && !existing ? (
           <Text style={styles.hint}>
-            {latestWeight ? `Başlangıç: son ölçümün ${fmtNum(latestWeight)} kg` : 'İlerleme “Vücut” bölümündeki kilo ölçümlerinden hesaplanır.'}
+            {latestWeight ? `Início: sua última medida ${fmtNum(latestWeight)} kg` : 'O progresso é calculado a partir das medidas de peso na seção “Corpo”.'}
           </Text>
         ) : null}
 
-        <Field label="Başlık (isteğe bağlı)" value={title} onChangeText={setTitle} placeholder={suggestedTitle()} />
+        <Field label="Título (opcional)" value={title} onChangeText={setTitle} placeholder={suggestedTitle()} />
 
         <View style={styles.row}>
-          <DateField label="Başlangıç" value={startDate} onChange={setStartDate} style={{ flex: 1 }} />
-          <DateField label="Son tarih" value={deadline} onChange={setDeadline} style={{ flex: 1 }} />
+          <DateField label="Início" value={startDate} onChange={setStartDate} style={{ flex: 1 }} />
+          <DateField label="Prazo" value={deadline} onChange={setDeadline} style={{ flex: 1 }} />
         </View>
 
         {existing?.type === 'custom' && existing.entries?.length ? (
           <>
-            <Text style={styles.label}>Kayıtlı ilerlemeler</Text>
+            <Text style={styles.label}>Progressos registrados</Text>
             {[...existing.entries].reverse().map((e) => (
               <View key={e.id} style={styles.entry}>
                 <Text style={styles.entryValue}>
@@ -192,7 +192,7 @@ const GoalEditorScreen = ({ navigation, route }) => {
         ) : null}
       </KeyboardAwareScrollView>
       <View style={styles.footer}>
-        <Button title="Kaydet" onPress={save} disabled={!canSave} />
+        <Button title="Salvar" onPress={save} disabled={!canSave} />
       </View>
 
       <ExercisePicker

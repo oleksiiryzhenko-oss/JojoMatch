@@ -53,9 +53,9 @@ const BackupScreen = () => {
       await FileSystem.makeDirectoryAsync(BACKUP_DIR, { intermediates: true });
       await FileSystem.writeAsStringAsync(`${BACKUP_DIR}jojomatch_${fileStamp()}.json`, json());
       await loadBackups();
-      Alert.alert('Yedek oluşturuldu', 'Yedek cihazında saklandı.');
+      Alert.alert('Backup criado', 'Backup salvo no dispositivo.');
     } catch {
-      Alert.alert('Hata', 'Yedek oluşturulamadı.');
+      Alert.alert('Erro', 'Não foi possível criar o backup.');
     } finally {
       setBusy(false);
     }
@@ -69,15 +69,15 @@ const BackupScreen = () => {
       if (!perm.granted) return;
       const uri = await SAF.createFileAsync(perm.directoryUri, `jojomatch_${fileStamp()}`, 'application/json');
       await FileSystem.writeAsStringAsync(uri, json());
-      Alert.alert('Kaydedildi', 'Yedek dosyası seçtiğin klasöre kaydedildi.');
+      Alert.alert('Salvo', 'Arquivo de backup salvo na pasta escolhida.');
     } catch {
-      Alert.alert('Hata', 'Dosya kaydedilemedi.');
+      Alert.alert('Erro', 'Não foi possível salvar o arquivo.');
     }
   };
 
   const shareJson = async () => {
     try {
-      await Share.share({ title: 'JojoMatch yedeği', message: json() });
+      await Share.share({ title: 'Backup JojoMatch', message: json() });
     } catch {
       // user dismissed
     }
@@ -85,24 +85,24 @@ const BackupScreen = () => {
 
   // Human-readable diary export
   const shareText = async () => {
-    const lines = ['JOJOMATCH ANTRENMAN GÜNLÜĞÜ', ''];
+    const lines = ['DIÁRIO DE TREINOS JOJOMATCH', ''];
     sortedSessions(sessions).forEach((s) => {
       const sum = summarizeSession(s);
       lines.push(`■ ${formatDateTime(s.startedAt)} — ${s.name} (${formatDuration(s.durationSec)}, ${sum.sets} set)`);
       s.exercises.forEach((it) => {
         const ex = exercisesById[it.exerciseId];
         lines.push(`  • ${ex?.name || '?'}: ${it.sets.map((st) => formatSet(st, ex?.type)).join(', ')}`);
-        if (it.note) lines.push(`    Not: ${it.note}`);
+        if (it.note) lines.push(`    Nota: ${it.note}`);
       });
       const b = s.wellbeingBefore;
       const a = s.wellbeingAfter;
-      if (b && !b.skipped) lines.push(`  Öncesi — enerji ${b.energy || '-'}/5, uyku ${b.sleep || '-'}/5, ruh hali ${b.mood || '-'}/5`);
-      if (a && !a.skipped) lines.push(`  Sonrası — RPE ${a.load || '-'}/10, yorgunluk ${a.fatigue || '-'}/5${a.comment ? `, “${a.comment}”` : ''}`);
-      if (s.note) lines.push(`  Not: ${s.note}`);
+      if (b && !b.skipped) lines.push(`  Antes — energia ${b.energy || '-'}/5, sono ${b.sleep || '-'}/5, humor ${b.mood || '-'}/5`);
+      if (a && !a.skipped) lines.push(`  Depois — RPE ${a.load || '-'}/10, fadiga ${a.fatigue || '-'}/5${a.comment ? `, “${a.comment}”` : ''}`);
+      if (s.note) lines.push(`  Nota: ${s.note}`);
       lines.push('');
     });
     try {
-      await Share.share({ title: 'Antrenman günlüğü', message: lines.join('\n') });
+      await Share.share({ title: 'Diário de treinos', message: lines.join('\n') });
     } catch {
       // user dismissed
     }
@@ -110,21 +110,21 @@ const BackupScreen = () => {
 
   const restore = (raw, label) =>
     Alert.alert(
-      'Geri yüklensin mi?',
-      `${label}\n\nMevcut tüm verilerin bu yedekteki verilerle değiştirilecek. Önce şu anki durumun yedeğini almanı öneririz.`,
+      'Restaurar?',
+      `${label}\n\nTodos os seus dados atuais serão substituídos pelos dados deste backup. Recomendamos fazer um backup do estado atual antes.`,
       [
-        { text: 'Vazgeç', style: 'cancel' },
+        { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Geri yükle',
+          text: 'Restaurar',
           style: 'destructive',
           onPress: () => {
             try {
               importData(JSON.parse(raw));
               setPasteOpen(false);
               setPasted('');
-              Alert.alert('Tamam', 'Veriler geri yüklendi.');
+              Alert.alert('OK', 'Dados restaurados.');
             } catch {
-              Alert.alert('Geçersiz yedek', 'Bu metin bir JojoMatch yedeği değil ya da bozuk.');
+              Alert.alert('Backup inválido', 'Este texto não é um backup JojoMatch ou está corrompido.');
             }
           },
         },
@@ -136,7 +136,7 @@ const BackupScreen = () => {
       const raw = await FileSystem.readAsStringAsync(b.uri);
       restore(raw, formatDateTime(b.modified));
     } catch {
-      Alert.alert('Hata', 'Dosya okunamadı.');
+      Alert.alert('Erro', 'Não foi possível ler o arquivo.');
     }
   };
 
@@ -150,7 +150,7 @@ const BackupScreen = () => {
       FileSystem.deleteAsync(asset.uri, { idempotent: true }).catch(() => {});
       restore(raw, asset.name);
     } catch {
-      Alert.alert('Hata', 'Dosya açılamadı.');
+      Alert.alert('Erro', 'Não foi possível abrir o arquivo.');
     }
   };
 
@@ -164,10 +164,10 @@ const BackupScreen = () => {
   };
 
   const deleteFile = (b) =>
-    Alert.alert('Yedek silinsin mi?', formatDateTime(b.modified), [
-      { text: 'Vazgeç', style: 'cancel' },
+    Alert.alert('Excluir backup?', formatDateTime(b.modified), [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Sil',
+        text: 'Excluir',
         style: 'destructive',
         onPress: async () => {
           await FileSystem.deleteAsync(b.uri, { idempotent: true });
@@ -178,36 +178,36 @@ const BackupScreen = () => {
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <Header back title="Yedekleme" subtitle="Verilerin yalnızca bu cihazda saklanır" />
+      <Header back title="Backup" subtitle="Seus dados ficam armazenados apenas neste dispositivo" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Card style={styles.summary}>
           <ShieldCheck color={colors.primary} size={26} />
           <View style={{ flex: 1 }}>
-            <Text style={styles.summaryTitle}>Günlüğünde</Text>
+            <Text style={styles.summaryTitle}>No seu diário</Text>
             <Text style={styles.summaryText}>
-              {sessions.length} antrenman · {templates.length} şablon · {measurements.length} ölçüm · {goals.length} hedef ·{' '}
-              {challenges.length} meydan okuma
+              {sessions.length} treinos · {templates.length} modelos · {measurements.length} medidas · {goals.length} metas ·{' '}
+              {challenges.length} desafios
             </Text>
           </View>
         </Card>
 
-        <SectionHeader title="Yedek oluştur" />
+        <SectionHeader title="Criar backup" />
         <View style={styles.actions}>
-          <Button title="Cihaza yedekle" icon={DatabaseBackup} onPress={createLocal} loading={busy} />
+          <Button title="Backup no dispositivo" icon={DatabaseBackup} onPress={createLocal} loading={busy} />
           {Platform.OS === 'android' ? (
-            <Button title="Klasöre kaydet (.json)" icon={FolderDown} variant="secondary" onPress={saveToFolder} />
+            <Button title="Salvar em pasta (.json)" icon={FolderDown} variant="secondary" onPress={saveToFolder} />
           ) : null}
-          <Button title="Yedeği paylaş" icon={Share2} variant="secondary" onPress={shareJson} />
-          <Button title="Günlüğü metin olarak dışa aktar" icon={FileText} variant="secondary" onPress={shareText} />
+          <Button title="Compartilhar backup" icon={Share2} variant="secondary" onPress={shareJson} />
+          <Button title="Exportar diário como texto" icon={FileText} variant="secondary" onPress={shareText} />
         </View>
 
-        <SectionHeader title="Geri yükle" />
+        <SectionHeader title="Restaurar" />
         <View style={styles.actions}>
-          <Button title="Dosyadan geri yükle (.json)" icon={FileUp} onPress={pickFile} />
-          <Button title="Yedek metnini yapıştır" icon={ClipboardPaste} variant="outline" onPress={() => setPasteOpen(true)} />
+          <Button title="Restaurar de arquivo (.json)" icon={FileUp} onPress={pickFile} />
+          <Button title="Colar texto do backup" icon={ClipboardPaste} variant="outline" onPress={() => setPasteOpen(true)} />
         </View>
 
-        <Text style={styles.subTitle}>Cihazdaki yedekler</Text>
+        <Text style={styles.subTitle}>Backups no dispositivo</Text>
         {backups.length ? (
           backups.map((b) => (
             <View key={b.name} style={styles.backup}>
@@ -215,32 +215,31 @@ const BackupScreen = () => {
                 <Text style={styles.backupName}>{formatDateTime(b.modified)}</Text>
                 <Text style={styles.backupMeta}>{Math.max(1, Math.round(b.size / 1024))} KB</Text>
               </View>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => restoreFile(b)} accessibilityLabel="Geri yükle">
+              <TouchableOpacity style={styles.iconBtn} onPress={() => restoreFile(b)} accessibilityLabel="Restaurar">
                 <RotateCcw color={colors.primary} size={18} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => shareFile(b)} accessibilityLabel="Paylaş">
+              <TouchableOpacity style={styles.iconBtn} onPress={() => shareFile(b)} accessibilityLabel="Compartilhar">
                 <Share2 color={colors.textSecondary} size={18} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => deleteFile(b)} accessibilityLabel="Sil">
+              <TouchableOpacity style={styles.iconBtn} onPress={() => deleteFile(b)} accessibilityLabel="Excluir">
                 <Trash2 color={colors.danger} size={18} />
               </TouchableOpacity>
             </View>
           ))
         ) : (
-          <Text style={styles.muted}>Henüz cihazda yedek yok.</Text>
+          <Text style={styles.muted}>Nenhum backup no dispositivo ainda.</Text>
         )}
 
         <Text style={styles.note}>
-          İpucu: Uygulamayı silersen cihazdaki yedekler de silinir. Önemli verileri “Klasöre kaydet” veya “Yedeği paylaş” ile
-          güvenli bir yere (Drive, e-posta) taşı.
+          Dica: Se você desinstalar o app, os backups no dispositivo também serão excluídos. Mova dados importantes para um local seguro (Drive, e-mail) com “Salvar em pasta” ou “Compartilhar backup”.
         </Text>
       </ScrollView>
 
       <Sheet
         visible={pasteOpen}
         onClose={() => setPasteOpen(false)}
-        title="Yedek metnini yapıştır"
-        footer={<Button title="Geri yükle" icon={RotateCcw} onPress={() => restore(pasted, 'Yapıştırılan yedek')} disabled={!pasted.trim()} />}
+        title="Colar texto do backup"
+        footer={<Button title="Restaurar" icon={RotateCcw} onPress={() => restore(pasted, 'Backup colado')} disabled={!pasted.trim()} />}
       >
         <Field
           value={pasted}

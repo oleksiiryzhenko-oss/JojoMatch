@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import * as Updates from 'expo-updates';
 import * as Progress from 'react-native-progress';
 import LinearGradient from 'react-native-linear-gradient';
-import { Dumbbell } from 'lucide-react-native';
+// import { Dumbbell } from 'lucide-react-native';
 
 import colors from '../utils/colors';
 import { useApp } from '../context/AppContext';
 
 const { width } = Dimensions.get('window');
-const MIN_DURATION = 3000;
+const MIN_DURATION = 6000;
 
 const PreviewScreen = ({ navigation }) => {
   const { hydrated, settings } = useApp();
@@ -63,12 +63,13 @@ const PreviewScreen = ({ navigation }) => {
     <LinearGradient colors={[colors.splashGlow, colors.background, colors.background]} style={styles.container}>
       <View style={styles.center}>
         <View style={styles.logo}>
-          <Dumbbell color={colors.onPrimary} size={56} strokeWidth={2.4} />
+          {/* <Dumbbell color={colors.onPrimary} size={56} strokeWidth={2.4} /> */}
+          <Image source={require('../../assets/logoNew.png')} style={{ width: 112, height: 112 }} />
         </View>
         <Text style={styles.title}>
           Jojo<Text style={{ color: colors.primary }}>Match</Text>
         </Text>
-        <Text style={styles.subtitle}>Antrenmanını kur · Kaydet · Gelişimini gör</Text>
+        <Text style={styles.subtitle}>Monte seu treino · Registre · Acompanhe</Text>
       </View>
       <View style={styles.progressContainer}>
         <Progress.Bar
@@ -98,19 +99,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logo: {
-    width: 112,
-    height: 112,
+    // width: 512,
+    // height: 512,
     borderRadius: 36,
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     transform: [{ rotate: '-8deg' }],
     marginBottom: 28,
-    shadowColor: colors.primary,
-    shadowOpacity: 0.5,
-    shadowRadius: 30,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 12,
   },
   title: {
     color: colors.text,

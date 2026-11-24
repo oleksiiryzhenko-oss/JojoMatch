@@ -112,7 +112,7 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
   };
 
   const buildTemplate = () => ({
-    name: name.trim() || 'Yeni Antrenman',
+    name: name.trim() || 'Novo Treino',
     notes: notes.trim(),
     color,
     exercises: items.map((it) => ({ ...it, sets: it.sets.length ? it.sets : [defaultSet(exercisesById[it.exerciseId]?.type)] })),
@@ -127,10 +127,10 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
 
   const onBack = () => {
     if (!dirty) return navigation.goBack();
-    Alert.alert('Değişiklikler kaydedilsin mi?', undefined, [
-      { text: 'Kaydetme', style: 'destructive', onPress: () => navigation.goBack() },
-      { text: 'Vazgeç', style: 'cancel' },
-      { text: 'Kaydet', onPress: save },
+    Alert.alert('Salvar alterações?', undefined, [
+      { text: 'Não salvar', style: 'destructive', onPress: () => navigation.goBack() },
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Salvar', onPress: save },
     ]);
   };
 
@@ -155,10 +155,10 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
   };
 
   const onDelete = () =>
-    Alert.alert('Antrenman silinsin mi?', 'Plandan da kaldırılacak. Geçmiş kayıtlar korunur.', [
-      { text: 'Vazgeç', style: 'cancel' },
+    Alert.alert('Excluir treino?', 'Será removido do plano também. O histórico será mantido.', [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Sil',
+        text: 'Excluir',
         style: 'destructive',
         onPress: () => {
           deleteTemplate(existing.id);
@@ -172,19 +172,19 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
       <Header
         back
         onBack={onBack}
-        title={existing ? 'Antrenmanı düzenle' : 'Yeni antrenman'}
+        title={existing ? 'Editar treino' : 'Novo treino'}
         right={
           existing ? (
             <>
-              <IconButton icon={Copy} onPress={onDuplicate} label="Kopyala" />
-              <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Sil" />
+              <IconButton icon={Copy} onPress={onDuplicate} label="Duplicar" />
+              <IconButton icon={Trash2} color={colors.danger} onPress={onDelete} label="Excluir" />
             </>
           ) : null
         }
       />
       <KeyboardAwareScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" bottomOffset={24}>
-        <Field label="Antrenman adı" value={name} onChangeText={touch(setName)} placeholder="Örn. Bacak Günü" />
-        <Text style={styles.label}>Renk</Text>
+        <Field label="Nome do treino" value={name} onChangeText={touch(setName)} placeholder="Ex.: Dia de Pernas" />
+        <Text style={styles.label}>Cor</Text>
         <View style={styles.colors}>
           {workoutColors.map((c) => (
             <TouchableOpacity
@@ -195,16 +195,16 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
           ))}
         </View>
         <Field
-          label="Notlar"
+          label="Notas"
           value={notes}
           onChangeText={touch(setNotes)}
-          placeholder="Isınma, tempo, dikkat edilecekler..."
+          placeholder="Aquecimento, ritmo, cuidados..."
           multiline
         />
 
-        <Text style={styles.sectionTitle}>Egzersizler ({items.length})</Text>
+        <Text style={styles.sectionTitle}>Exercícios ({items.length})</Text>
         {!items.length ? (
-          <EmptyState title="Henüz egzersiz eklenmedi" text="Aşağıdaki butonla kütüphaneden egzersiz ekle." />
+          <EmptyState title="Nenhum exercício adicionado" text="Adicione exercícios da biblioteca com o botão abaixo." />
         ) : null}
 
         {items.map((it, index) => {
@@ -218,7 +218,7 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.itemName} numberOfLines={1}>
-                    {ex?.name || 'Silinmiş egzersiz'}
+                    {ex?.name || 'Exercício excluído'}
                   </Text>
                   <Text style={styles.itemMeta}>
                     {ex?.category} · {EXERCISE_TYPES[type].label}
@@ -239,7 +239,7 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
 
               <View style={styles.setHeader}>
                 <Text style={[styles.setHeaderText, { width: 34 }]}>Set</Text>
-                <Text style={[styles.setHeaderText, { flex: 1 }]}>Hedef</Text>
+                <Text style={[styles.setHeaderText, { flex: 1 }]}>Alvo</Text>
               </View>
               {it.sets.map((s, i) => (
                 <View key={i} style={styles.setRow}>
@@ -254,7 +254,7 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
               <View style={styles.itemFooter}>
                 <TouchableOpacity style={styles.addSet} onPress={() => addSet(it.id)}>
                   <Plus color={colors.primary} size={16} />
-                  <Text style={styles.addSetText}>Set ekle</Text>
+                  <Text style={styles.addSetText}>Adicionar série</Text>
                 </TouchableOpacity>
                 <View style={styles.rest}>
                   <Timer color={colors.textMuted} size={15} />
@@ -274,28 +274,28 @@ const WorkoutEditorScreen = ({ navigation, route }) => {
               <View style={styles.itemActions}>
                 <TouchableOpacity style={styles.itemAction} onPress={() => setPicker({ mode: 'replace', itemId: it.id })}>
                   <RefreshCw color={colors.textSecondary} size={14} />
-                  <Text style={styles.itemActionText}>Değiştir</Text>
+                  <Text style={styles.itemActionText}>Substituir</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.itemAction} onPress={() => removeItem(it.id)}>
                   <Trash2 color={colors.danger} size={14} />
-                  <Text style={[styles.itemActionText, { color: colors.danger }]}>Kaldır</Text>
+                  <Text style={[styles.itemActionText, { color: colors.danger }]}>Remover</Text>
                 </TouchableOpacity>
               </View>
             </View>
           );
         })}
 
-        <Button title="Egzersiz ekle" icon={Plus} variant="outline" onPress={() => setPicker({ mode: 'add' })} />
+        <Button title="Adicionar exercício" icon={Plus} variant="outline" onPress={() => setPicker({ mode: 'add' })} />
       </KeyboardAwareScrollView>
 
       <View style={styles.footer}>
-        <Button title="Başla" icon={Play} variant="secondary" onPress={onStart} disabled={!items.length} style={{ flex: 1 }} />
-        <Button title="Kaydet" onPress={save} style={{ flex: 1.6 }} />
+        <Button title="Iniciar" icon={Play} variant="secondary" onPress={onStart} disabled={!items.length} style={{ flex: 1 }} />
+        <Button title="Salvar" onPress={save} style={{ flex: 1.6 }} />
       </View>
 
       <ExercisePicker
         visible={!!picker}
-        title={picker?.mode === 'replace' ? 'Egzersizi değiştir' : 'Egzersiz ekle'}
+        title={picker?.mode === 'replace' ? 'Substituir exercício' : 'Adicionar exercício'}
         onClose={() => setPicker(null)}
         onSelect={onPick}
         excludeIds={items.map((it) => it.exerciseId)}
