@@ -18,7 +18,7 @@
         "foregroundImage": "./assets/logoNew.png",
         "backgroundColor": "#06110C"
       },
-      "versionCode": 2,
+      "versionCode": 3,
       "package": "com.jojjjjjomaatcchh",
       "permissions": [
         "com.google.android.gms.permission.AD_ID",
