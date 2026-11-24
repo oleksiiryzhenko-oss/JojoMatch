@@ -20,13 +20,73 @@ workflows:
         script: |
           # NODE_ENV=production makes npm skip devDependencies (javascript-obfuscator is needed by metro.config.js)
           npm ci --include=dev
+      - name: Generate Android project if missing
+        script: |
+          set -eu
+          if [ ! -f android/app/build.gradle ]; then
+            npx --no-install expo prebuild --platform android --no-install
+          fi
+      - name: Configure release signing
+        script: |
+          set -eu
+          : "${CM_KEYSTORE_PATH:?Missing Codemagic keystore jojomatch}"
+          : "${CM_KEYSTORE_PASSWORD:?Missing keystore password}"
+          : "${CM_KEY_ALIAS:?Missing key alias}"
+          : "${CM_KEY_PASSWORD:?Missing key password}"
+          test -f "$CM_KEYSTORE_PATH"
+          cat >> android/app/build.gradle <<'SIGNING'
+
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file(System.getenv("CM_KEYSTORE_PATH"))
+                      storePassword System.getenv("CM_KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("CM_KEY_ALIAS")
+                      keyPassword System.getenv("CM_KEY_PASSWORD")
+                  }
+              }
+              buildTypes {
+                  release {
+                      debuggable false
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          SIGNING
+      - name: Sync Android versions from app.json
+        script: |
+          set -eu
+          python3 - <<'PYTHON'
+          import json, pathlib, re
+
+          config = json.loads(pathlib.Path('app.json').read_text())['expo']
+          code = config['android']['versionCode']
+          name = config['version']
+          if type(code) is not int or code < 1:
+              raise SystemExit('expo.android.versionCode must be a positive integer')
+          if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9._+-]+', name):
+              raise SystemExit('expo.version must be a valid nonempty version string')
+          gradle = pathlib.Path('android/app/build.gradle')
+          if not gradle.is_file():
+              raise SystemExit('android/app/build.gradle is missing. Android generation did not produce build.gradle.')
+          source = gradle.read_text()
+          source, codes = re.subn(r'(?m)^(\s*)versionCode\s+\d+\s*$',
+                                  lambda m: m[1] + 'versionCode ' + str(code), source)
+          source, names = re.subn(r'(?m)^(\s*)versionName\s+["\'][^"\']+["\']\s*$',
+                                  lambda m: m[1] + 'versionName ' + json.dumps(name), source)
+          if codes != 1 or names != 1:
+              raise SystemExit('Expected exactly one versionCode and versionName in Android Gradle')
+          gradle.write_text(source)
+          print(f'Android version synchronized: {name} ({code})')
+          PYTHON
       - name: Set Android SDK location
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
       - name: Build Android release (AAB + APK)
         script: |
+          set -eu
           cd android
-          ./gradlew bundleRelease assembleRelease
+          bash gradlew bundleRelease assembleRelease --no-daemon
     artifacts:
       - android/app/build/outputs/**/*.aab
       - android/app/build/outputs/**/*.apk
